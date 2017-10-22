@@ -1,6 +1,0 @@
-﻿  RenderClass.cpp
-c:\users\yaso\documents\visual studio 2015\projects\eve\eve\renderclass.cpp(114): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\yaso\documents\visual studio 2015\projects\eve\eve\renderclass.cpp(116): warning C4800: 'HRESULT': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\yaso\documents\visual studio 2015\projects\eve\eve\renderclass.cpp(160): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
-  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.exe
-  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.pdb (Partial PDB)
