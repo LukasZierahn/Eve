@@ -115,6 +115,7 @@
     <ClInclude Include="ChemicalContainer.h" />
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="include.h" />
+    <ClInclude Include="InfoWindow.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelLoader.h" />
@@ -127,6 +128,7 @@
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="ChemicalContainer.cpp" />
     <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="InfoWindow.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelLoader.cpp" />

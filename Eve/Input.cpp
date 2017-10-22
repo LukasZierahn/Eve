@@ -57,17 +57,20 @@ void Input::Key(bool down, WPARAM mes)
 
 void Input::Mouse(WPARAM wParam, int x, int y, HWND hWnd)
 {
-	int dx = x - (wndRect.right / 2);
-	int dy = y - (wndRect.bottom / 2);
+	if (!(GetKeyState(VK_MENU) & 0x8000))
+	{
+		int dx = x - (wndRect.right / 2);
+		int dy = y - (wndRect.bottom / 2);
 
-	render->GetCamera()->AddRotation(dy / mouseSense, dx / mouseSense, 0.0f);
+		render->GetCamera()->AddRotation(dy / mouseSense, dx / mouseSense, 0.0f);
 
-	POINT centerPos;
-	centerPos.x = (wndRect.right / 2);
-	centerPos.y = (wndRect.bottom / 2);
+		POINT centerPos;
+		centerPos.x = (wndRect.right / 2);
+		centerPos.y = (wndRect.bottom / 2);
 
-	MapWindowPoints(hWnd, NULL, &centerPos, 1);
-	SetCursorPos(centerPos.x, centerPos.y);
+		MapWindowPoints(hWnd, NULL, &centerPos, 1);
+		SetCursorPos(centerPos.x, centerPos.y);
+	}
 }
 
 

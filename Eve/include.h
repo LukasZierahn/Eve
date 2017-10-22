@@ -20,7 +20,7 @@ using namespace std;
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "D3DCompiler.lib")
 
-void static CheckForError(bool hr, string mes)
+void static CheckForError(HRESULT hr, string mes)
 {
 	if (FAILED(hr))
 	{

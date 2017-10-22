@@ -6,6 +6,7 @@
 class Chunk;
 class Cell;
 class RenderClass;
+class ChemicalPush;
 
 class World
 {
@@ -15,26 +16,28 @@ private:
 	int sizeX, sizeY, sizeZ; //z is depth, this size is given in chunks, the real size is this size * chunksize
 	int clock;
 
-	HWND hWnd;
-	HWND textLabel;
-	HINSTANCE hInstance;
+	float chemConFlowSpeed = 1;
 
 	RenderClass* render = nullptr;
 
 	vector<Chunk*> chunkVec;
 	vector<Cell*> cellVec;
 
-	int WriteString(HDC hDC, string toWrite, int pos);
+	vector<ChemicalPush*> chemPushVec;
 
 public:
-	World(RenderClass* rndCls, HWND hW, HINSTANCE hInstance, int cSize, int s);
-	World(RenderClass* rndCls, HWND hW, HINSTANCE hInstance, int cSize, int sX, int sY, int sZ);
+	World(RenderClass* rndCls, int cSize, int s);
+	World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ);
 
 	void AddCell(float x, float y, float z);
-
 	Chunk* GetChunk(int x, int y, int z);
 
-	void WriteInfoData();
+	float GetChemConFlowSpeed() { return chemConFlowSpeed; };
+	void AddChemPush(ChemicalPush* CP) { chemPushVec.push_back(CP); };
+
+	string GetInfoWindowString();
+
+	void Tick(float t);
 
 	~World();
 };

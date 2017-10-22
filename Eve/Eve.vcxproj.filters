@@ -28,6 +28,12 @@
     <Filter Include="Header Files\Render Header">
       <UniqueIdentifier>{4911ad16-5f38-4566-afda-9dcebf637a07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{e9c4be52-7a6c-455d-92cc-597758bbcaff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Window">
+      <UniqueIdentifier>{547af93e-e4c5-476e-8807-17cab638f47f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include.h">
@@ -63,6 +69,9 @@
     <ClInclude Include="ChemicalContainer.h">
       <Filter>Header Files\Eve Header</Filter>
     </ClInclude>
+    <ClInclude Include="InfoWindow.h">
+      <Filter>Header Files\Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -97,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="ChemicalContainer.cpp">
       <Filter>Source Files\Eve</Filter>
+    </ClCompile>
+    <ClCompile Include="InfoWindow.cpp">
+      <Filter>Source Files\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,8 +4,9 @@
 #include "Model.h"
 #include "Input.h"
 #include "World.h"
+#include "InfoWindow.h"
 
-RenderClass* render;
+RenderClass* render = nullptr;
 World* world = nullptr;
 
 LRESULT CALLBACK EveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -124,7 +125,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 		return 1;
 	}
 
-	world = new World(render, infoHWnd, hInstance, 50, 10);
+	world = new World(render, 50, 10);
+	InfoWindow infoWindow(infoHWnd, hInstance, world);
 
 	ShowWindow(hWnd, CmdShow);
 	UpdateWindow(hWnd);	
@@ -143,11 +145,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	ZeroMemory(&Msg, sizeof(MSG));
 
 	long long t = milliseconds_now();
+	int counterForInfoWindowUpdates = 0;
 
 	while (true)
 	{
 		long long NewTime = milliseconds_now();
 		int DeltaTime = NewTime - t;
+		counterForInfoWindowUpdates += DeltaTime;
 
 		if (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -159,7 +163,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 		}
 
 		render->GetInput()->RunTick(DeltaTime);
+		world->Tick(DeltaTime);
 		render->RenderFrame();
+
+		if (counterForInfoWindowUpdates > 500)
+		{
+			infoWindow.WriteInfoData();
+			counterForInfoWindowUpdates = 0;
+		}
 
 		t = NewTime;
 	}

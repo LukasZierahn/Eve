@@ -4,23 +4,14 @@
 #include "Cell.h"
 
 
-int World::WriteString(HDC hDC, string toWrite, int pos)
-{
-
-	TextOut(hDC, 10, pos * 20, toWrite.c_str(), toWrite.length());
-	return ++pos;
-}
-
-World::World(RenderClass* rndCls, HWND hW, HINSTANCE hIns, int cSize, int s) : World(rndCls, hW, hIns, cSize, s, s, s)
+World::World(RenderClass* rndCls, int cSize, int s) : World(rndCls, cSize, s, s, s)
 {
 
 }
 
-World::World(RenderClass* rndCls, HWND hW, HINSTANCE hIns, int cSize, int sX, int sY, int sZ)
+World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 {
 	render = rndCls;
-	hWnd = hW;
-	hInstance = hIns;
 	chunkSize = cSize;
 	chunkVolume = pow(chunkSize, 3);
 	sizeX = sX;
@@ -33,15 +24,10 @@ World::World(RenderClass* rndCls, HWND hW, HINSTANCE hIns, int cSize, int sX, in
 		{
 			for (int z = 0; z < sizeZ; z++)
 			{
-				chunkVec.push_back(new Chunk(x, y, z));
+				chunkVec.push_back(new Chunk(x, y, z, this, chunkVolume));
 			}
 		}
 	}
-
-	RECT rect;
-	GetWindowRect(hWnd, &rect);
-	textLabel = CreateWindow("STATIC", "not initilized", WS_VISIBLE | WS_CHILD | SS_LEFT, 0, 0, rect.right, 100, hWnd, NULL, hInstance, NULL);
-	WriteInfoData();
 }
 
 Chunk* World::GetChunk(int x, int y, int z)
@@ -49,7 +35,7 @@ Chunk* World::GetChunk(int x, int y, int z)
 	return chunkVec[(x * sizeZ * sizeY) + (y * sizeZ) + z];
 }
 
-void World::WriteInfoData()
+string World::GetInfoWindowString()
 {
 	string buffer = "";
 
@@ -58,17 +44,22 @@ void World::WriteInfoData()
 	buffer += " Total Chunks: " + to_string(chunkVec.size()) + "  (" + to_string(sizeX) + " / " + to_string(sizeY) + " / " + to_string(sizeZ) + ")\n";
 	buffer += " Cells Alive: " + to_string(cellVec.size()) + "\n";
 
-	SetWindowText(textLabel, TEXT(buffer.c_str()));
+	return buffer;
+}
+
+void World::Tick(float t)
+{
+
 }
 
 void World::AddCell(float x, float y, float z)
 {
 	cellVec.push_back(new Cell(render, x, y, z));
-	WriteInfoData();
 }
 
 World::~World()
 {
+	delete render;
 	for (Cell* c : cellVec)
 	{
 		delete c;

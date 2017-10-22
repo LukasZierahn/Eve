@@ -16,7 +16,7 @@ public:
 	void RenderFrame();
 
 	Model* GetModel(int index) { return modelVector[index]; }
-	void AddModel(Model* mod) { modelVector.push_back(mod); 	modelVector.shrink_to_fit(); }
+	void AddModel(Model* mod) { modelVector.push_back(mod); modelVector.shrink_to_fit(); }
 
 	void GetDevice(ComPtr<ID3D11Device>* dev) { device.As(dev); }
 	void GetDeviceContext(ComPtr<ID3D11DeviceContext>* devcon) { deviceContext.As(devcon); }
