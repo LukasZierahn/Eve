@@ -10,7 +10,7 @@ InfoWindow::InfoWindow(HWND hW, HINSTANCE hIns, World* w)
 
 	RECT rect;
 	GetWindowRect(hWnd, &rect);
-	textLabel = CreateWindow("STATIC", "not initilized", WS_VISIBLE | WS_CHILD | SS_LEFT, 0, 0, rect.right, 100, hWnd, NULL, hInstance, NULL);
+	textLabel = CreateWindow("STATIC", "not initilized", WS_VISIBLE | WS_CHILD | SS_LEFT, 0, 0, rect.right, 600, hWnd, NULL, hInstance, NULL);
 	WriteInfoData();
 }
 

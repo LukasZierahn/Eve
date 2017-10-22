@@ -3,6 +3,16 @@
 
 #include "include.h"
 
+//all of the following are given in mass concentration and represent todays average sea water, source: https://en.wikipedia.org/wiki/Seawater
+#define sodium_cations_concentration 1.925
+#define chlorid_anions_concentration 1.071
+#define sulfate_concentration 0.2695
+
+//these are given in g/mol
+#define sodium_cations_atomic_weigth 22.990
+#define chlorid_anions_atomic_weigth 35.45
+#define sulfate_atomic_weigth 32.06 + 4 * 15.999 //1 sulfur + 4 oxygens
+
 class World;
 
 class ChemicalContainer
@@ -21,10 +31,12 @@ class ChemicalContainer
 public:
 	ChemicalContainer(World* world, int volume);
 	
-	void DispatchPushMessagesToChunks(int t);
-	void AddsurroundingChunk(ChemicalContainer* newCem) { surroundingChunks.push_back(newCem); };
+	void DispatchPushMessagesToChunks(float t);
+	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks.push_back(newCem); };
 
 	map<string, float>* GetContains() { return &contains; };
+	void AddSubstanceToContains(string key, float add) { contains.at(key) += add; };
+	void SetSubstanceInContains(string key, float set) { contains.at(key) = set; };
 
 	~ChemicalContainer();
 };
