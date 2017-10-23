@@ -1,7 +1,11 @@
 #include "ChemicalContainer.h"
 #include "World.h"
 
-ChemicalContainer::ChemicalContainer(World* world, int vol) : world(world), volume(vol)
+//these are given in um/s^2
+//sources: http://www.physiologyweb.com/calculators/diffusion_time_calculator.html, http://www.academia.edu/13131731/The_diffusion_coefficients_of_sulfate_ammonium_and_phosphate_ions_in_anoxic_marine_sediments1
+const float ChemicalContainer::diffusionCoefficients[] = { 0.133, 0.203, 0.05 };
+
+ChemicalContainer::ChemicalContainer(World* world, int vol) :  world(world), volume(vol)
 {
 	//all of the substances are in mole * 10^-12 (1 mol = 6.022 * 10^23 atoms, 1 * 10^-12 mol = 6.022 * 10^11 atoms)
 	//since the biggest part of a given chemical container is water, if not state differently, the volume is a close approximation to the weight
@@ -15,11 +19,6 @@ ChemicalContainer::ChemicalContainer(World* world, int vol) : world(world), volu
 	{
 		containsBuffer[i] = contains[i];
 	}
-	//these are given in um/s^2
-	//sources: http://www.physiologyweb.com/calculators/diffusion_time_calculator.html, http://www.academia.edu/13131731/The_diffusion_coefficients_of_sulfate_ammonium_and_phosphate_ions_in_anoxic_marine_sediments1
-	diffusionCoefficients[sodium_cations] = 0.133;
-	diffusionCoefficients[chlorid_anions] = 0.203;
-	diffusionCoefficients[sulfate] = 0.05;
 
 	for (int i = 0; i < number_of_substances; i++)
 	{

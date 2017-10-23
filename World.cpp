@@ -56,17 +56,27 @@ string World::GetInfoWindowString()
 	buffer += " Chunk Volume : " + to_string(chunkVolume) + "\n";
 	buffer += " Total Chunks: " + to_string(chunkVec.size()) + "  (" + to_string(sizeX) + " / " + to_string(sizeY) + " / " + to_string(sizeZ) + ")\n";
 	buffer += " Cells Alive: " + to_string(cellVec.size()) + "\n";
-	buffer += " Containings of 0th Chunk: \n";
-	/*for (map<string, float> ::iterator it = chunkVec.at(0)->GetChemCon()->GetContains()->begin(); it != chunkVec.at(0)->GetChemCon()->GetContains()->end(); ++it)
+
+	double total = 0;
+
+	for (int i = 0; i < 1000; i++)
 	{
-		buffer += "   " + it->first + ": " + to_string(it->second) + "\n";
+		total += chunkVec[i]->GetChemCon()->GetContains()[0];
+	}
+
+	buffer += " Total Na:" + to_string(total) + "\n";
+
+	buffer += " Containings of 0th Chunk: \n";
+	for (int i = 0; i < number_of_substances; i++)
+	{
+		buffer += "   " + writtenSubstances[i] + ": " + to_string(GetChunk(0, 0, 0)->GetChemCon()->GetContains()[i]) + "\n";
 	}
 
 	buffer += " Containings of 1th Chunk: \n";
-	for (map<string, float> ::iterator it = chunkVec.at(100)->GetChemCon()->GetContains()->begin(); it != chunkVec.at(100)->GetChemCon()->GetContains()->end(); ++it)
+	for (int i = 0; i < number_of_substances; i++)
 	{
-		buffer += "   " + it->first + ": " + to_string(it->second) + "\n";
-	}*/
+		buffer += "   " + writtenSubstances[i] + ": " + to_string(GetChunk(0, 0, 1)->GetChemCon()->GetContains()[i]) + "\n";
+	}
 
 	return buffer;
 }

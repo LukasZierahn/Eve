@@ -31,11 +31,11 @@ class ChemicalContainer
 
 	World* world;
 
-	float contains[number_of_substances]; //different concentrations of fluids are stored here
-	float containsBuffer[number_of_substances];
+	double contains[number_of_substances]; //different concentrations of fluids are stored here
+	double containsBuffer[number_of_substances];
 
 	//these are given in um/s^2
-	float diffusionCoefficients[number_of_substances];
+	static const float diffusionCoefficients[number_of_substances];
 
 	//these are given in ms
 	float diffusionTimes[number_of_substances];
@@ -57,7 +57,7 @@ public:
 
 	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks.push_back(newCem); };
 
-	float* GetContains() { return contains; };
+	double* GetContains() { return contains; };
 	void AddSubstanceToContains(int key, float add) { contains[key] += add; };
 	void SetSubstanceInContains(int key, float set) { contains[key] = set; };
 

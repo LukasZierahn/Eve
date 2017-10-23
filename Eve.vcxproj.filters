@@ -34,6 +34,9 @@
     <Filter Include="Header Files\Window">
       <UniqueIdentifier>{547af93e-e4c5-476e-8807-17cab638f47f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Stuff thats not done">
+      <UniqueIdentifier>{241355ce-e8b8-4afe-8b58-48449d45673f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="InfoWindow.h">
       <Filter>Header Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareAcceleration.h">
+      <Filter>Stuff thats not done</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,10 +116,16 @@
     <ClCompile Include="InfoWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
+    <ClCompile Include="HardwareAcceleration.cpp">
+      <Filter>Stuff thats not done</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader.HLSL">
       <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="hardwareAccelerationShader.HLSL">
+      <Filter>Stuff thats not done</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
