@@ -6,7 +6,6 @@
 class Chunk;
 class Cell;
 class RenderClass;
-class ChemicalPush;
 
 class World
 {
@@ -18,15 +17,10 @@ private:
 
 	float chemConFlowSpeed = 1;
 
-	//these are given in um/s^2
-	map<string, float> diffusionCoefficients;
-
 	RenderClass* render = nullptr;
 
 	vector<Chunk*> chunkVec;
 	vector<Cell*> cellVec;
-
-	vector<ChemicalPush*> chemPushVec;
 
 public:
 	World(RenderClass* rndCls, int cSize, int s);
@@ -36,9 +30,7 @@ public:
 	Chunk* GetChunk(int x, int y, int z);
 
 	float GetChemConFlowSpeed() { return chemConFlowSpeed; };
-	float GetDiffusionCoefficient(string key) { return diffusionCoefficients.at(key); };
 	int GetChunkSize() { return chunkSize; };
-	void AddChemPush(ChemicalPush* CP) { chemPushVec.push_back(CP); };
 
 	int GetSizeX() { return sizeX; };
 	int GetSizeY() { return sizeY; };

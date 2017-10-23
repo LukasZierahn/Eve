@@ -3,6 +3,14 @@
 
 #include "include.h"
 
+#define number_of_substances 3
+
+#define sodium_cations 0
+#define chlorid_anions 1
+#define sulfate 2
+
+static string writtenSubstances[]  = {"Na", "Cl", "Sulfate"};
+
 //all of the following are given in mass concentration and represent todays average sea water, source: https://en.wikipedia.org/wiki/Seawater
 #define sodium_cations_concentration 1.925
 #define chlorid_anions_concentration 1.071
@@ -23,7 +31,14 @@ class ChemicalContainer
 
 	World* world;
 
-	map<string, float> contains; //different concentrations of fluids are stored here
+	float contains[number_of_substances]; //different concentrations of fluids are stored here
+	float containsBuffer[number_of_substances];
+
+	//these are given in um/s^2
+	float diffusionCoefficients[number_of_substances];
+
+	//these are given in ms
+	float diffusionTimes[number_of_substances];
 
 	vector<ChemicalContainer*> surroundingChunks; //this only applies if the container in question actually is a chunk, if its a cell this remains empty
 	//the vector is ordered like this: 0-5 are the 6 direct neighbours, 6-13 are the 8 neighbours that are root(2) away and 14-23 are the 8 corners
@@ -31,21 +46,22 @@ class ChemicalContainer
 public:
 	ChemicalContainer(World* world, int volume);
 	
-	void DispatchPushMessagesToChunks(float t);
+	void DiffuseToNeighbouringChunks(float t);
+	void ApplyContains() 
+	{ 
+		for (int i = 0; i < number_of_substances; i++)
+		{
+			contains[i] = containsBuffer[i];
+		}
+	};
+
 	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks.push_back(newCem); };
 
-	map<string, float>* GetContains() { return &contains; };
-	void AddSubstanceToContains(string key, float add) { contains.at(key) += add; };
-	void SetSubstanceInContains(string key, float set) { contains.at(key) = set; };
+	float* GetContains() { return contains; };
+	void AddSubstanceToContains(int key, float add) { contains[key] += add; };
+	void SetSubstanceInContains(int key, float set) { contains[key] = set; };
 
 	~ChemicalContainer();
-};
-
-struct ChemicalPush
-{
-	ChemicalContainer* source;
-	ChemicalContainer* target;
-	map<string, float> contains;
 };
 
 #endif

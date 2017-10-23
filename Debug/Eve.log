@@ -1,2 +1,20 @@
-﻿  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.exe
+﻿  World.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(17): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Chunk.cpp
+  ChemicalContainer.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(20): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(21): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(22): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(26): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(34): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Source.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(90): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(95): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(157): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(170): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.exe
   Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.pdb (Partial PDB)

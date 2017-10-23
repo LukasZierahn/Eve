@@ -142,7 +142,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	world->AddCell(0.0f, 0.0f, 0.0f);
 	world->AddCell(0.0f, 0.0f, 0.0f);
 
-	world->GetChunk(1, 0, 0)->GetChemCon()->SetSubstanceInContains("Na", 0);
+	world->GetChunk(1, 0, 0)->GetChemCon()->SetSubstanceInContains(0, 0);
 
 	//Initalising the Message loop
 	MSG Msg;

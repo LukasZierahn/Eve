@@ -7,34 +7,43 @@ ChemicalContainer::ChemicalContainer(World* world, int vol) : world(world), volu
 	//since the biggest part of a given chemical container is water, if not state differently, the volume is a close approximation to the weight
 	//1 litre water ~ 1 kilo water, 1 um^3 ~ 10^-12 g
 	//total mass / molar mass = mol
-	contains["Na"] = (vol * sodium_cations_concentration) / sodium_cations_atomic_weigth; //sodium cations
-	contains["Cl"] = (vol * chlorid_anions_concentration) / chlorid_anions_atomic_weigth; //chloride anions
-	contains["Sulfate"] = (vol * sulfate_concentration) / sulfate_atomic_weigth; //Sulfate
+	contains[sodium_cations] = (vol * sodium_cations_concentration) / sodium_cations_atomic_weigth; //sodium cations
+	contains[chlorid_anions] = (vol * chlorid_anions_concentration) / chlorid_anions_atomic_weigth; //chloride anions
+	contains[sulfate] = (vol * sulfate_concentration) / sulfate_atomic_weigth; //Sulfate
+
+	for (int i = 0; i < number_of_substances; i++)
+	{
+		containsBuffer[i] = contains[i];
+	}
+	//these are given in um/s^2
+	//sources: http://www.physiologyweb.com/calculators/diffusion_time_calculator.html, http://www.academia.edu/13131731/The_diffusion_coefficients_of_sulfate_ammonium_and_phosphate_ions_in_anoxic_marine_sediments1
+	diffusionCoefficients[sodium_cations] = 0.133;
+	diffusionCoefficients[chlorid_anions] = 0.203;
+	diffusionCoefficients[sulfate] = 0.05;
+
+	for (int i = 0; i < number_of_substances; i++)
+	{
+		diffusionTimes[i] = pow(world->GetChunkSize(), 2) / 2 * diffusionCoefficients[i] * 1000;
+	}
 }
 
-void ChemicalContainer::DispatchPushMessagesToChunks(float t)
+void ChemicalContainer::DiffuseToNeighbouringChunks(float t)
 {
 	float flow = world->GetChemConFlowSpeed();
 
 	for (short i = 0; i < surroundingChunks.size(); i++)
 	{
-		ChemicalPush* chemPush = new ChemicalPush();
-		chemPush->source = this;
-		chemPush->target = surroundingChunks.at(i);
-		chemPush->contains.clear();
 
 		if (surroundingChunks.at(i) != nullptr)
 		{
-			for (map<string, float>::iterator it = contains.begin(); it != contains.end(); ++it)
+			for (int i = 0; i < number_of_substances; i++)
 			{
 				//to approximate diffusion I will use, t ~ (d^2)/2D, where d is the distance and D is the Diffusion Coefficient
 				//the average distance between two points in the two chunks is the size of a chunk
-				double tNeeded = pow(world->GetChunkSize(), 2) / 2 * world->GetDiffusionCoefficient(it->first) * 1000;
-				chemPush->contains[it->first] = (t / tNeeded) * world->GetChemConFlowSpeed() * it->second;
+				surroundingChunks.at(i)->containsBuffer[i] += (t / diffusionTimes[i]) * world->GetChemConFlowSpeed() * contains[i];
+				containsBuffer[i] -= (t / diffusionTimes[i]) * world->GetChemConFlowSpeed() * contains[i];
 			}
 		}
-
-		world->AddChemPush(chemPush);
 	}
 }
 
