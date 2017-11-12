@@ -14,7 +14,7 @@ HardwareAcceleration::HardwareAcceleration()
 	ID3D10Blob *errorBlob;
 	ID3D10Blob *fluidMovementBlob;
 
-	hr = D3DCompileFromFile(L"hardwareAccelerationShader.HLSL", NULL, NULL, "HAS", "vs_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL1 || D3DCOMPILE_WARNINGS_ARE_ERRORS, NULL, &fluidMovementBlob, &errorBlob);
+	hr = D3DCompileFromFile(L"hardwareAccelerationShader.HLSL", NULL, NULL, "HAS", "gs_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL1 || D3DCOMPILE_WARNINGS_ARE_ERRORS, NULL, &fluidMovementBlob, &errorBlob);
 	CheckForError(hr, "Failed to fill VertexShaderBlob");
 
 	hr = device->CreateVertexShader(fluidMovementBlob->GetBufferPointer(), fluidMovementBlob->GetBufferSize(), NULL, fluidMovementShader.GetAddressOf());

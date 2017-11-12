@@ -7,8 +7,12 @@
 #include "InfoWindow.h"
 #include "Chunk.h"
 #include "ChemicalContainer.h"
+#include "Camera.h"
+#include "CellInfoWindow.h"
 
 RenderClass* render = nullptr;
+InfoWindow* infoWindow = nullptr;
+CellInfoWindow* cellInfoWindow = nullptr;
 World* world = nullptr;
 
 LRESULT CALLBACK EveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -31,27 +35,6 @@ LRESULT CALLBACK EveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		render->GetInput()->Mouse(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), hWnd);
 		break;
 
-	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
-		break;
-	}
-
-	return 0;
-}
-
-LRESULT CALLBACK InfoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-
-	case WM_PAINT:
-	{
-		//world->WriteInfoData();
-		break;
-	}
 	default:
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 		break;
@@ -110,52 +93,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 		return 1;
 	}
 
-	//the window containing information about the current chunk and cells (we pro recycling)
-	wcex.lpszClassName = "eveInfo";
-	wcex.lpfnWndProc = InfoProc;
-	if (!RegisterClassEx(&wcex))
-	{
-		MessageBox(NULL, "Call to RegisterClassEx on info failed!", "Eve", NULL);
-		return 1;
-	}
-
-	HWND infoHWnd = CreateWindow("eveInfo", "Eve Info", WS_VISIBLE | WS_OVERLAPPEDWINDOW, 0, 0, 350, 1000, NULL, NULL, hInstance, NULL);
-
-	if (!infoHWnd)
-	{
-		MessageBox(NULL, "Call to CreateWindow on info failed!", "Eve", NULL);
-		return 1;
-	}
-
-	world = new World(render, 50, 10);
-	InfoWindow infoWindow(infoHWnd, hInstance, world);
-
-	ShowWindow(hWnd, CmdShow);
-	UpdateWindow(hWnd);	
-	
 	RECT desktop;
 	GetWindowRect(GetDesktopWindow(), &desktop);
 	SetWindowPos(hWnd, HWND_TOP, (desktop.right / 2) - 600, (desktop.bottom / 2) - 375, 0, 0, SWP_NOSIZE || SWP_SHOWWINDOW);
 
-	UpdateWindow(infoHWnd);
+	world = new World(render, 50, 10);
+	render->GetCamera()->SetWorld(world);
+	infoWindow = new InfoWindow(hInstance, world);
+	cellInfoWindow = new CellInfoWindow(hInstance, world, render);
 
-	world->AddCell(0.0f, 0.0f, 0.0f);
-	world->AddCell(0.0f, 0.0f, 0.0f);
+	render->GetInput()->SetCellInfoWindow(cellInfoWindow);
+
+	ShowWindow(hWnd, CmdShow);
+	UpdateWindow(hWnd);	
+
+	world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
 
 	world->GetChunk(1, 0, 0)->GetChemCon()->SetSubstanceInContains(0, 0);
 
 	//Initalising the Message loop
+	cellInfoWindow->SetClosestCellAsCurrentCell();
 	MSG Msg;
 	ZeroMemory(&Msg, sizeof(MSG));
 
 	long long t = milliseconds_now();
+	long long NewTime;
+	int DeltaTime;
+
 	int counterForInfoWindowUpdates = 0;
+	int FPS = 0;
 
 	while (true)
 	{
-		long long NewTime = milliseconds_now();
-		int DeltaTime = NewTime - t;
+		NewTime = milliseconds_now();
+		DeltaTime = NewTime - t;
 		counterForInfoWindowUpdates += DeltaTime;
+		FPS++;
 
 		if (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -172,14 +145,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 
 		if (counterForInfoWindowUpdates > 500)
 		{
-			infoWindow.WriteInfoData();
+			infoWindow->WriteInfoData(FPS * (1000.0f / counterForInfoWindowUpdates));
+			cellInfoWindow->WriteInfoData();
 			counterForInfoWindowUpdates = 0;
+			FPS = 0;
 		}
 
 		t = NewTime;
 	}
 
-	delete render, world;
+	delete render, infoWindow, cellInfoWindow, world;
 
 	return 0;
 }

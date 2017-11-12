@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "RenderClass.h"
 #include "Include.h"
+#include "CellInfoWindow.h"
 
 Input::Input(RenderClass* RndCls, RECT rect)
 {
@@ -52,6 +53,12 @@ void Input::Key(bool down, WPARAM mes)
 				render->SetFillMode(D3D11_FILL_SOLID);
 		}
 		break;
+
+	case('G'):
+		if (down)
+		{
+			cellInfoWindow->SetClosestCellAsCurrentCell();
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Include.h"
 #include "RenderClass.h"
+#include "World.h"
 
 Camera::Camera(RenderClass* rend, RECT si)
 {
@@ -30,17 +31,17 @@ Camera::Camera(RenderClass* rend, RECT si)
 	device->CreateBuffer(&bd, nullptr, constBuffer.GetAddressOf());
 
 	//initialize the matrixes
-	eyePos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	focusPos = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	upDir = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	eyePos = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	focusPos = XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
+	upDir = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	view = XMMatrixLookAtLH(eyePos, focusPos, upDir);
+	XMStoreFloat4x4(&view, XMMatrixLookAtLH(XMLoadFloat4(&eyePos), XMLoadFloat4(&focusPos), XMLoadFloat4(&upDir)));
 
-	projection = XMMatrixPerspectiveFovLH(XM_PIDIV4, size.right / (FLOAT)size.bottom, 0.001f, 200.0f);
+	XMStoreFloat4x4(&projection, XMMatrixPerspectiveFovLH(XM_PIDIV4, size.right / (FLOAT)size.bottom, 0.001f, 200.0f));
 
 	deviceContext->VSSetConstantBuffers(0, 1, constBuffer.GetAddressOf());
 
-	SetPosition(0.0f, 0.0f, 0.0f);
+	SetPosition(0.0f, 0.0f, 0.0f, false);
 }
 
 void Camera::UpdateConstBuffer()
@@ -49,8 +50,8 @@ void Camera::UpdateConstBuffer()
 
 	cb.worldRot = XMMatrixIdentity();
 	cb.worldPos = XMMatrixIdentity();
-	cb.view = XMMatrixTranspose(view);
-	cb.projection = XMMatrixTranspose(projection);
+	cb.view = XMMatrixTranspose(XMLoadFloat4x4(&view));
+	cb.projection = XMMatrixTranspose(XMLoadFloat4x4(&projection));
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	ZeroMemory(&MappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -80,17 +81,28 @@ void Camera::AddRotation(float R, float P, float Y)
 	UpdateViewMatrix();
 }
 
-void Camera::SetPosition(float x, float y, float z)
+void Camera::SetPosition(float x, float y, float z, bool bounds)
 {
-	pos = XMVectorSet(x, y, z, 1);
+	if (bounds)
+	{
+		world->KeepPointInBounds(&x, &y, &z);
+	}
+
+	pos = XMFLOAT4(x, y, z, 1);
 
 	UpdateViewMatrix();
 }
 
-void Camera::AddPosition(float x, float y, float z)
+void Camera::AddPosition(float x, float y, float z, bool bounds)
 {
-	XMVECTOR BufferVector = XMVectorSet(x, y, z, 1);
-	pos += BufferVector;
+	pos.x += x;
+	pos.y += y;
+	pos.z += z;
+
+	if (bounds)
+	{
+		world->KeepPointInBounds(&x, &y, &z);
+	}
 
 	UpdateViewMatrix();
 }
@@ -101,10 +113,9 @@ void inline Camera::UpdateViewMatrix()
 
 	eyePos = pos;
 
-	XMVECTOR BufferVector = XMVectorSet(rX, roll / -XM_PIDIV2, rZ, 1);
-	focusPos = pos + BufferVector;
+	focusPos = XMFLOAT4(pos.x + rX, pos.y + roll / -XM_PIDIV2, pos.z + rZ, 1);
 
-	view = XMMatrixLookAtLH(eyePos, focusPos, upDir);
+	XMStoreFloat4x4(&view, XMMatrixLookAtLH(XMLoadFloat4(&eyePos), XMLoadFloat4(&focusPos), XMLoadFloat4(&upDir))); //shhhh we dont talk about how ineffecient this is
 }
 
 Camera::~Camera()

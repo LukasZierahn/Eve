@@ -28,21 +28,23 @@ ChemicalContainer::ChemicalContainer(World* world, int vol) :  world(world), vol
 
 void ChemicalContainer::DiffuseToNeighbouringChunks(float t)
 {
-	float flow = world->GetChemConFlowSpeed();
-
-	for (short i = 0; i < surroundingChunks.size(); i++)
+	for (short i = 0; i < amountOfNeightbouringChunks; i++)
 	{
+		DiffuseFromAndTo(surroundingChunks[i], t);
+	}
+}
 
-		if (surroundingChunks.at(i) != nullptr)
-		{
-			for (int i = 0; i < number_of_substances; i++)
-			{
-				//to approximate diffusion I will use, t ~ (d^2)/2D, where d is the distance and D is the Diffusion Coefficient
-				//the average distance between two points in the two chunks is the size of a chunk
-				surroundingChunks.at(i)->containsBuffer[i] += (t / diffusionTimes[i]) * world->GetChemConFlowSpeed() * contains[i];
-				containsBuffer[i] -= (t / diffusionTimes[i]) * world->GetChemConFlowSpeed() * contains[i];
-			}
-		}
+void ChemicalContainer::DiffuseFromAndTo(ChemicalContainer* target, float t)
+{
+	float flow = world->GetChemConFlowSpeed();
+	int chunkSize = world->GetChunkSize();
+
+	for (int j = 0; j < number_of_substances; j++)
+	{
+		//to approximate diffusion I will use, t ~ (d^2)/2D, where d is the distance and D is the Diffusion Coefficient
+		//the average distance between two points in the two chunks is the size of a chunk
+		target->containsBuffer[j] += (t / diffusionTimes[j]) * flow * ((contains[j] / volume) - (target->contains[j] / target->volume)) * chunkSize;
+		containsBuffer[j] += (t / diffusionTimes[j]) * flow * ((target->contains[j] / target->volume) - (contains[j] / volume)) * chunkSize;
 	}
 }
 

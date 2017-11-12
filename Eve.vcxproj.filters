@@ -78,6 +78,9 @@
     <ClInclude Include="HardwareAcceleration.h">
       <Filter>Stuff thats not done</Filter>
     </ClInclude>
+    <ClInclude Include="CellInfoWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="HardwareAcceleration.cpp">
       <Filter>Stuff thats not done</Filter>
+    </ClCompile>
+    <ClCompile Include="CellInfoWindow.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

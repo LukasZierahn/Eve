@@ -25,9 +25,10 @@ class World;
 
 class ChemicalContainer
 {
-	int volume;
+	int volume; //this is given in um
 	int pressure;
-	float temperature;
+
+	short amountOfNeightbouringChunks = 0;
 
 	World* world;
 
@@ -40,13 +41,16 @@ class ChemicalContainer
 	//these are given in ms
 	float diffusionTimes[number_of_substances];
 
-	vector<ChemicalContainer*> surroundingChunks; //this only applies if the container in question actually is a chunk, if its a cell this remains empty
+	ChemicalContainer* surroundingChunks[24]; //this only applies if the container in question actually is a chunk, if its a cell this remains empty
 	//the vector is ordered like this: 0-5 are the 6 direct neighbours, 6-13 are the 8 neighbours that are root(2) away and 14-23 are the 8 corners
 
 public:
 	ChemicalContainer(World* world, int volume);
 	
 	void DiffuseToNeighbouringChunks(float t);
+
+	void DiffuseFromAndTo(ChemicalContainer* target, float t);
+
 	void ApplyContains() 
 	{ 
 		for (int i = 0; i < number_of_substances; i++)
@@ -55,11 +59,11 @@ public:
 		}
 	};
 
-	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks.push_back(newCem); };
+	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks[amountOfNeightbouringChunks] = newCem; amountOfNeightbouringChunks++; };
 
 	double* GetContains() { return contains; };
-	void AddSubstanceToContains(int key, float add) { contains[key] += add; };
-	void SetSubstanceInContains(int key, float set) { contains[key] = set; };
+	void AddSubstanceToContains(int key, float add) { contains[key] += add; containsBuffer[key] = contains[key]; };
+	void SetSubstanceInContains(int key, float set) { contains[key] = set; containsBuffer[key] = contains[key]; };
 
 	~ChemicalContainer();
 };

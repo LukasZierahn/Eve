@@ -17,16 +17,16 @@ public:
 
 	void SetRotation(float, float, float);
 	void AddRotation(float, float, float);
-	void Setposition(float, float, float);
-	void Setposition(XMVECTOR);
-	void Addposition(float, float, float, bool = false);
+	void SetPosition(float, float, float);
+	void SetPosition(XMFLOAT4);
+	void AddPosition(float, float, float, bool = false);
 
 	void SetData(ModelData* d) { data = d; };
 	ModelData** GetDataPointer() { return &data; };
 	void SetTexture(Texture* t) { tex = t; };
 	Texture** GetTexturePointer() { return &tex; };
 
-	XMVECTOR* Getposition() { return &position; }
+	XMFLOAT4* GetPosition() { return &position; }
 
 	void Draw();
 
@@ -46,8 +46,8 @@ private:
 	ModelBuffer modBufHeader;
 
 protected:
-	XMVECTOR position;
-	XMMATRIX scale;
+	XMFLOAT4 position;
+	XMFLOAT4X4 scale;
 
 	float roll = 0.0f;
 	float pitch = 0.0f;

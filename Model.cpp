@@ -11,11 +11,7 @@ Model::Model(RenderClass* rndCls)
 	render->GetDeviceContext(&deviceContext);
 	render->GetSamplerState(&samplerState);
 
-	scale = XMMatrixScaling(1,1,1);
-
-	modBufHeader.position = XMMatrixIdentity();
-	modBufHeader.rotation = XMMatrixIdentity();
-	modBufHeader.scale = XMMatrixTranspose(scale);
+	XMStoreFloat4x4(&scale, XMMatrixScaling(1,1,1));
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
@@ -31,7 +27,7 @@ Model::Model(RenderClass* rndCls, float x, float y, float z)
 {
 	Model::Model(rndCls);
 
-	position = XMVectorSet(x, y, z, 1);
+	position = XMFLOAT4(x, y, z, 1);
 }
 
 void Model::Draw()
@@ -39,8 +35,9 @@ void Model::Draw()
 	if (data != nullptr && data->initialized)
 	{
 		//buffer stuff
-		modBufHeader.position = XMMatrixTranslationFromVector(position);
-		modBufHeader.rotation = XMMatrixRotationRollPitchYaw(roll, pitch, yawn);
+		XMStoreFloat4x4(&modBufHeader.position, XMMatrixTranslationFromVector(XMLoadFloat4(&position)));
+		XMStoreFloat4x4(&modBufHeader.rotation, XMMatrixRotationRollPitchYaw(roll, pitch, yawn));
+		modBufHeader.scale = scale;
 
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		ZeroMemory(&MappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -85,20 +82,21 @@ void Model::AddRotation(float R, float P, float Y)
 	yawn += Y;
 }
 
-void Model::Setposition(float x, float y, float z)
+void Model::SetPosition(float x, float y, float z)
 {
-	position = XMVectorSet(x, y, z, 1);
+	position = XMFLOAT4(x, y, z, 1);
 }
 
-void Model::Setposition(XMVECTOR newpos)
+void Model::SetPosition(XMFLOAT4 newpos)
 {
 	position = newpos;
 }
 
-void Model::Addposition(float x, float y, float z, bool collision)
+void Model::AddPosition(float x, float y, float z, bool collision)
 {
-		XMVECTOR BufferVector = XMVectorSet(x, y, z, 1);
-		position += BufferVector;
+	position.x += x;
+	position.y += y;
+	position.z += z;
 }
 
 Model::~Model()

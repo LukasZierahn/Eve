@@ -1,55 +1,13 @@
-cbuffer ConstantBuffer : register(b0)
+struct FM_INPUT
 {
-	matrix worldPos;
-	matrix worldRot;
-	matrix view;
-	matrix projection;
-}
-
-cbuffer ModelBuffer : register(b1)
-{
-	matrix scale;
-	matrix position;
-	matrix rotation;
-}
-
-struct HASInput
-{
-	float2 pos : SV_position;
+	float4 Pos : SV_POSITION;
+	float3 Norm : TEXCOORD0;
+	float2 Tex : TEXCOORD1;
 };
 
-struct HASOutput
+[maxvertexcount(12)]
+void FM(point FM_INPUT input[1], inout TriangleStream<FM_INPUT> TriStream)
 {
-	float pos : SV_position;
-};
-
-
-VS_OUTPUT VS(float4 pos : position, float2 tex : TEXPOS)
-{
-	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.pos = mul(pos, rotation);
-	output.pos = mul(position, output.pos);
-
-	output.pos = mul(worldPos, output.pos);
-	output.pos = mul(output.pos, worldRot);
-
-	output.pos = mul(output.pos, scale);
-
-	output.pos = mul(output.pos, view);
-	output.pos = mul(output.pos, projection);
-
-	output.tex = tex;
-	return output;
-}
-
-Texture2D shaderTexture;
-SamplerState sampleType;
-
-float4 PS(float4 position : SV_position, float2 tex : TEXPOS) : SV_TARGET
-{
-	float4 textureColour;
-
-textureColour = shaderTexture.Sample(sampleType, tex);
-
-return textureColour;
+	FM_INPUT output = 0;
+	TriStream.Append(output);
 }

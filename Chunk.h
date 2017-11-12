@@ -18,6 +18,10 @@ public:
 	void AquireNeighbours();
 	ChemicalContainer* GetChemCon() { return ChemCon; };
 
+	int GetX() { return x; }
+	int GetY() { return y; }
+	int GetZ() { return z; }
+
 	~Chunk();
 };
 

@@ -13,12 +13,11 @@ private:
 
 	World* world;
 
-	int WriteString(HDC hDC, string toWrite, int pos);
-
 public:
-	InfoWindow(HWND hW, HINSTANCE hInstance, World* w);
+	InfoWindow(HINSTANCE hInstance, World* w);
 
-	void WriteInfoData();
+	void WriteInfoData(int FPS = 0);
+	static LRESULT CALLBACK Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	~InfoWindow();
 };

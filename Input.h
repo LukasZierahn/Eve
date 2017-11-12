@@ -5,19 +5,15 @@
 
 class RenderClass;
 class Model;
+class CellInfoWindow;
 
 class Input
 {
-public:
-	Input(RenderClass*, RECT);
-	void Key(bool, WPARAM);
-	void Mouse(WPARAM, int, int, HWND hWnd);
-
-	void RunTick(int t);
-
 private:
 	RenderClass* render;
 	RECT wndRect;
+
+	CellInfoWindow* cellInfoWindow = nullptr;
 
 	Model* mod;
 
@@ -35,6 +31,15 @@ private:
 
 	float x, y, z;
 	float rX, rZ;
+
+public:
+	Input(RenderClass*, RECT);
+	void Key(bool, WPARAM);
+	void Mouse(WPARAM, int, int, HWND hWnd);
+
+	void SetCellInfoWindow(CellInfoWindow* CIW) { cellInfoWindow = CIW; }
+
+	void RunTick(int t);
 };
 
 #endif

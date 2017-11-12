@@ -42,11 +42,11 @@ struct ConstantBuffer
 	XMMATRIX projection;
 };
 
-struct ModelBuffer
+struct  ModelBuffer
 {
-	XMMATRIX scale;
-	XMMATRIX position;
-	XMMATRIX rotation;
+	XMFLOAT4X4 scale;
+	XMFLOAT4X4 position;
+	XMFLOAT4X4 rotation;
 };
 
 struct ModelData
