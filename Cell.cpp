@@ -17,8 +17,8 @@ Cell::Cell(RenderClass* rndCls, World* world)
 
 	chunkSize = world->GetChunkSize();
 
-	rndCls->GetModelLoader()->GetModel("Cube", mod->GetDataPointer());
-	rndCls->GetModelLoader()->GetTexture("Cube", mod->GetTexturePointer());
+	rndCls->GetModelLoader()->GetModel("Cell", mod->GetDataPointer());
+	rndCls->GetModelLoader()->GetTexture("Cell", mod->GetTexturePointer());
 
 	rndCls->AddModel(mod);
 }
@@ -37,6 +37,8 @@ void Cell::Tick(float t)
 	chemCon->DiffuseFromAndTo(chunk->GetChemCon(), t);
 
 	chemCon->ApplyContains();
+
+
 }
 
 
