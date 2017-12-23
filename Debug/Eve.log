@@ -1,2 +1,39 @@
-﻿  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.exe
-  Eve.vcxproj -> C:\Users\Yaso\documents\visual studio 2015\Projects\Eve\Debug\Eve.pdb (Partial PDB)
+﻿  ChemicalContainer.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(6): warning C4838: conversion from 'double' to 'const float' requires a narrowing conversion
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(6): warning C4305: 'initializing': truncation from 'double' to 'const float'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(9): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\chemicalcontainer.cpp(62): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  Compiling...
+  World.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(12): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(63): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(67): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(78): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(79): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\world.cpp(80): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Chunk.cpp
+  CellInfoWindow.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\cellinfowindow.cpp(25): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\cellinfowindow.cpp(30): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+  Cell.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\cell.cpp(35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Texture.cpp
+  RenderClass.cpp
+  ModelLoader.cpp
+  Model.cpp
+  Input.cpp
+  InfoWindow.cpp
+  Camera.cpp
+  Source.cpp
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(73): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(78): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(127): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2015\projects\eve\eve\source.cpp(146): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Eve.vcxproj -> C:\Users\Yaso\Documents\Visual Studio 2015\Projects\Eve\Debug\Eve.exe

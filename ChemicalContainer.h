@@ -3,29 +3,41 @@
 
 #include "include.h"
 
-#define number_of_substances 3
+#define number_of_substances 5
 
-#define sodium_cations 0
-#define chlorid_anions 1
-#define sulfate 2
+#define CO2 0
+#define glucose 1
+#define sodium_cations 2
+#define chlorid_anions 3
+#define sulfate 4
+#define water 5
 
-static string writtenSubstances[]  = {"Na", "Cl", "Sulfate"};
+static string writtenSubstances[]  = {"CO2", "Glucose", "Na", "Cl", "Sulfate"};
 
-//all of the following are given in mass concentration and represent todays average sea water, source: https://en.wikipedia.org/wiki/Seawater
+//all of the following are given in mass concentration and represent todays average sea water (salinity 3.5%), source: https://en.wikipedia.org/wiki/Seawater
+#define CO2_concentration 0.2695 //TODO: Do this
+#define glucose_concentration 0 //TODO: Do this
 #define sodium_cations_concentration 1.925
 #define chlorid_anions_concentration 1.071
 #define sulfate_concentration 0.2695
 
-//these are given in g/mol
+
+//these are given in g/mol, source: https://www.lenntech.com/calculators/molecular/molecular-weight-calculator.htm
+#define CO2_atomic_weigth 44.01
+#define glucose_atomic_weigth 180.16
 #define sodium_cations_atomic_weigth 22.990
 #define chlorid_anions_atomic_weigth 35.45
 #define sulfate_atomic_weigth 32.06 + 4 * 15.999 //1 sulfur + 4 oxygens
+#define water_atomic_weigth 18.01528
+
+#define water_CO2_to_glucose 0.0001
 
 class World;
 
 class ChemicalContainer
 {
-	int volume; //this is given in um
+	float volume; //this is given in um
+	float temperature; //this is given in degree Celcius, so that we operate closer to the 0 and thus the float is more precises
 	int pressure;
 
 	short amountOfNeightbouringChunks = 0;
@@ -39,6 +51,7 @@ class ChemicalContainer
 	static const float diffusionCoefficients[number_of_substances];
 
 	//these are given in ms
+	float temperatureDiffusionTime = 100000.0f;
 	float diffusionTimes[number_of_substances];
 
 	ChemicalContainer* surroundingChunks[24]; //this only applies if the container in question actually is a chunk, if its a cell this remains empty
@@ -51,6 +64,8 @@ public:
 
 	void DiffuseFromAndTo(ChemicalContainer* target, float t);
 
+	void DoReactions(float t, bool apply = true);
+
 	void ApplyContains() 
 	{ 
 		for (int i = 0; i < number_of_substances; i++)
@@ -61,9 +76,10 @@ public:
 
 	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks[amountOfNeightbouringChunks] = newCem; amountOfNeightbouringChunks++; };
 
-	double* GetContains() { return contains; };
-	void AddSubstanceToContains(int key, float add) { contains[key] += add; containsBuffer[key] = contains[key]; };
-	void SetSubstanceInContains(int key, float set) { contains[key] = set; containsBuffer[key] = contains[key]; };
+	double* GetContains() { return contains; }
+	float GetTemperature() { return temperature; }
+	void AddSubstanceToContains(int key, float add) { contains[key] += add; containsBuffer[key] = contains[key]; }
+	void SetSubstanceInContains(int key, float set) { contains[key] = set; containsBuffer[key] = contains[key]; }
 
 	~ChemicalContainer();
 };

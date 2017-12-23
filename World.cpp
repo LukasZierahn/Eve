@@ -107,6 +107,8 @@ string World::GetInfoWindowString()
 	int chunkPosX, chunkPosY, chunkPosZ;
 	GetChunkPos(camPos, &chunkPosX, &chunkPosY, &chunkPosZ);
 
+	buffer += " Chunk Temperature: " + to_string(GetChunk(chunkPosX, chunkPosY, chunkPosZ)->GetChemCon()->GetTemperature()) + "° \n";
+
 	buffer += " Currently in Chunk: " + to_string(chunkPosX) + "/" + to_string(chunkPosY) + "/" + to_string(chunkPosZ) + "\n";
 
 	for (int i = 0; i < number_of_substances; i++)
@@ -131,7 +133,7 @@ void World::Tick(float t)
 
 	for (int i = 0; i < chunkArraySize; i++)
 	{
-		chunkArray[i]->GetChemCon()->ApplyContains();
+		chunkArray[i]->GetChemCon()->DoReactions(t, true);
 	}
 }
 

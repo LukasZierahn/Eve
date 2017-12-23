@@ -107,9 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	ShowWindow(hWnd, CmdShow);
 	UpdateWindow(hWnd);	
 
-	world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
-
-	world->GetChunk(1, 0, 0)->GetChemCon()->SetSubstanceInContains(0, 0);
+	//world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
 
 	//Initalising the Message loop
 	cellInfoWindow->SetClosestCellAsCurrentCell();

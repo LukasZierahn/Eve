@@ -37,6 +37,12 @@
     <Filter Include="Stuff thats not done">
       <UniqueIdentifier>{241355ce-e8b8-4afe-8b58-48449d45673f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\NeuralNetwork">
+      <UniqueIdentifier>{90ec8bc1-28b9-4464-996e-9f7fb423b1bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NeuralNetwork">
+      <UniqueIdentifier>{a8725a78-6e12-451e-a9a6-56a6fcafbc49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include.h">
@@ -78,8 +84,14 @@
     <ClInclude Include="HardwareAcceleration.h">
       <Filter>Stuff thats not done</Filter>
     </ClInclude>
+    <ClInclude Include="NeuralNetwork.h">
+      <Filter>Header Files\NeuralNetwork</Filter>
+    </ClInclude>
     <ClInclude Include="CellInfoWindow.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DNA.h">
+      <Filter>Header Files\Eve Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,8 +134,14 @@
     <ClCompile Include="HardwareAcceleration.cpp">
       <Filter>Stuff thats not done</Filter>
     </ClCompile>
+    <ClCompile Include="NeuralNetwork.cpp">
+      <Filter>Source Files\NeuralNetwork</Filter>
+    </ClCompile>
     <ClCompile Include="CellInfoWindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DNA.cpp">
+      <Filter>Source Files\Eve</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
