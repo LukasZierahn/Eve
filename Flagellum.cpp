@@ -12,10 +12,10 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos)
 
 	//accel and max speed are influenced by the first two dna characters, max speed more by the first and accel more by the second
 	accelSpeed = dna->GetCharacter(startpos) / 500.0f;
-	maxSpeed = dna->GetCharacter(startpos + 1) / 10.0f;
+	maxSpeed = dna->GetCharacter(startpos + 1) / 100.0f;
 
 
-	maxSpeed += dna->GetCharacter(startpos + 1) / 50.0f;
+	maxSpeed += dna->GetCharacter(startpos + 1) / 500.0f;
 	accelSpeed += dna->GetCharacter(startpos + 1) / 150.0f;
 
 	energyRequierement = pow(maxSpeed, 2) + pow(accelSpeed, 2);

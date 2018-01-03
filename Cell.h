@@ -13,7 +13,7 @@ class NeuralNetwork;
 
 #define Type_Flagellum 1
 
-struct Trait
+//struct Trait
 {
 	void* pointer = nullptr;
 	int type = 0; //why cant i just store a reference to the type of class i am using?
@@ -40,11 +40,14 @@ private:
 	XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };
 
 	vector<Trait*> traits;
+
+	const static string dnaCriteria[];
 public:
 	Cell(RenderClass* rndCls, World* world);
 	Cell(RenderClass* rndCls, World* world, float x, float y, float z);
 
 	void Tick(float t);
+	void CheckDNAForTraits();
 
 	Model* GetModel() { return mod; }
 	ChemicalContainer* GetChemCon() { return chemCon; }

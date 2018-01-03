@@ -10,6 +10,8 @@
 #include "NeuralNetwork.h"
 #include "Flagellum.h"
 
+const static string dnaCriteria[] = { "Fl" };
+
 Cell::Cell(RenderClass* rndCls, World* world)
 {
 	volume = 10000; //this is not finalised
@@ -56,11 +58,15 @@ void Cell::Tick(float t)
 		}
 	}
 
+	//this is drag by the water
 	velocity.x -= t * pow(velocity.x, 2) / 10.0f;
 	velocity.y -= t * pow(velocity.y, 2) / 10.0f;
 	velocity.z -= t * pow(velocity.z, 2) / 10.0f;
 
 	mod->AddPosition(velocity.x, velocity.y, velocity.z);
+
+	float velocitySum = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2) + pow(velocity.z, 2));
+	mod->SetRotation(asin(velocity.x / velocitySum), asin(velocity.y / velocitySum), -asin(velocity.z / velocitySum));
 
 	XMFLOAT4 pos = *mod->GetPosition();
 
@@ -69,6 +75,31 @@ void Cell::Tick(float t)
 	chemCon->DiffuseFromAndTo(chunk->GetChemCon(), t);
 
 	chemCon->ApplyContains();
+}
+
+void Cell::CheckDNAForTraits()
+{
+	for (int i = 0; i < dnaCriteria->size(); i++)
+	{
+		int searchStart = 0;
+		while (searchStart != string::npos)
+		{
+			searchStart = dna->GetString().find(dnaCriteria[i], searchStart);
+			if (searchStart != string::npos)
+			{
+				Trait* trait = new Trait;
+
+				if (i == Type_Flagellum)
+				{
+					Flagellum* Fl = new Flagellum(this, dna, searchStart);
+					trait->pointer = Fl;
+					trait->type = Type_Flagellum;
+				}
+
+				traits.push_back(trait);
+			}
+		}
+	}
 }
 
 
@@ -108,7 +139,7 @@ string Cell::GetOutputString()
 	{
 		if (i % 3 == 2)
 		{
-			buffer += "\n";
+			buffer += "\n       ";
 		}
 		buffer += to_string(neuralNet->GetInputNode(i)) + " ";
 	}
@@ -121,7 +152,7 @@ string Cell::GetOutputString()
 	{
 		if (i % 3 == 2)
 		{
-			buffer += "\n";
+			buffer += "\n       ";
 		}
 		buffer += to_string(neuralNet->GetOutputNode(i)) + " ";
 	}

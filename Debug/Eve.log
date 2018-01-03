@@ -1,5 +1,11 @@
 ﻿  Cell.cpp
 c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(22): warning C4018: '<': signed/unsigned mismatch
 c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.cpp(55): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.cpp(67): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.cpp(71): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Source.cpp
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(73): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(78): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(128): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(147): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Eve.vcxproj -> C:\Users\Yaso\Documents\Visual Studio 2017\Projects\Eve\Debug\Eve.exe

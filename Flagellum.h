@@ -1,8 +1,6 @@
 #ifndef __H__Flagellum
 #define __H__Flagellum
 
-#define FlagellumCriteria "Fl" //Fl has to appear in the DNA for a Flagellum to be created
-
 class DNA;
 class NeuralNetwork;
 class Cell;
