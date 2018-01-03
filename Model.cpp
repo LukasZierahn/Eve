@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "RenderClass.h"
 #include "Texture.h"
+#include "World.h"
 
 Model::Model(RenderClass* rndCls)
 {
@@ -97,6 +98,8 @@ void Model::AddPosition(float x, float y, float z, bool collision)
 	position.x += x;
 	position.y += y;
 	position.z += z;
+
+	render->GetWorld()->KeepPointInBounds(&position.x, &position.y, &position.z);
 }
 
 Model::~Model()

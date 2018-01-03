@@ -1,4 +1,4 @@
-#ifndef  __H__include
+#ifndef __H__include
 #define __H__include
 
 #include <wrl/client.h>
@@ -67,7 +67,12 @@ struct TargaHeader
 	unsigned char data2;
 };
 
-float inline Balance(float x)
+const static int ConvertDNAtoInt(char c)
+{
+	return (c - 32); //there are 32 characters in the front of the ASCII table that I wont use in the DNA string
+}
+
+const static float Balance(float x)
 {
 
 	while (x >= XM_2PI)
@@ -83,7 +88,7 @@ float inline Balance(float x)
 	return x;
 }
 
-float inline BalanceAndLock(float x)
+const static float BalanceAndLock(float x)
 {
 	if (x > XM_PI)
 		x = XM_PI;
@@ -94,7 +99,7 @@ float inline BalanceAndLock(float x)
 	return x;
 }
 
-void inline TurnRadiantsIntoXandZComponent(float Rotation, float *x, float *z)
+const static void TurnRadiantsIntoXandZComponent(float Rotation, float *x, float *z)
 {
 	if (Rotation <= XM_PIDIV2)
 	{
@@ -118,7 +123,7 @@ void inline TurnRadiantsIntoXandZComponent(float Rotation, float *x, float *z)
 	}
 }
 
-void inline TurnRadiantsIntoXandZComponentSin(float Rotation, float *x, float *z)
+const static void TurnRadiantsIntoXandZComponentSin(float Rotation, float *x, float *z)
 {
 	*z = cos(Rotation);
 	*x = sin(Rotation);

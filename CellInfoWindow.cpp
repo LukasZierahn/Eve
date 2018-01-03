@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "ChemicalContainer.h"
 #include "Chunk.h"
+#include "NeuralNetwork.h"
 
 CellInfoWindow::CellInfoWindow(HINSTANCE hIns, World* w, RenderClass* render)
 {
@@ -79,21 +80,7 @@ void CellInfoWindow::WriteInfoData()
 
 	if (currentCell != nullptr)
 	{
-		Chunk* cellChunk = currentCell->GetCurrentChunk();
-
-		buffer += " Cell contains: \n";
-
-		for (int i = 0; i < number_of_substances; i++)
-		{
-			buffer += "  " + writtenSubstances[i] + ": " + to_string(currentCell->GetChemCon()->GetContains()[i]) + "\n";
-		}
-
-		buffer += "\n Chunk (" + to_string(cellChunk->GetX()) + "/" + to_string(cellChunk->GetY()) + "/" + to_string(cellChunk->GetZ()) + ") contains: \n";
-
-		for (int i = 0; i < number_of_substances; i++)
-		{
-			buffer += "  " + writtenSubstances[i] + ": " + to_string(cellChunk->GetChemCon()->GetContains()[i]) + "\n";
-		}
+		buffer += currentCell->GetOutputString();
 	}
 
 	SetWindowText(textLabel, TEXT(buffer.c_str()));

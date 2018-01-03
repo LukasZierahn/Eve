@@ -1,36 +1,13 @@
-#ifndef  __H__ChemicalContainer
+#ifndef __H__ChemicalContainer
 #define __H__ChemicalContainer
 
 #include "include.h"
 
-#define number_of_substances 5
+#define contains_amount 2
 
-#define CO2 0
-#define glucose 1
-#define sodium_cations 2
-#define chlorid_anions 3
-#define sulfate 4
-#define water 5
+#define TemperatureDiffusionCoefficient 1
 
-static string writtenSubstances[]  = {"CO2", "Glucose", "Na", "Cl", "Sulfate"};
-
-//all of the following are given in mass concentration and represent todays average sea water (salinity 3.5%), source: https://en.wikipedia.org/wiki/Seawater
-#define CO2_concentration 0.2695 //TODO: Do this
-#define glucose_concentration 0 //TODO: Do this
-#define sodium_cations_concentration 1.925
-#define chlorid_anions_concentration 1.071
-#define sulfate_concentration 0.2695
-
-
-//these are given in g/mol, source: https://www.lenntech.com/calculators/molecular/molecular-weight-calculator.htm
-#define CO2_atomic_weigth 44.01
-#define glucose_atomic_weigth 180.16
-#define sodium_cations_atomic_weigth 22.990
-#define chlorid_anions_atomic_weigth 35.45
-#define sulfate_atomic_weigth 32.06 + 4 * 15.999 //1 sulfur + 4 oxygens
-#define water_atomic_weigth 18.01528
-
-#define water_CO2_to_glucose 0.0001
+const static string writtenSubstances[] = { "Food", "CO2" };
 
 class World;
 
@@ -38,21 +15,15 @@ class ChemicalContainer
 {
 	float volume; //this is given in um
 	float temperature; //this is given in degree Celcius, so that we operate closer to the 0 and thus the float is more precises
-	int pressure;
 
 	short amountOfNeightbouringChunks = 0;
 
 	World* world;
 
-	double contains[number_of_substances]; //different concentrations of fluids are stored here
-	double containsBuffer[number_of_substances];
+	double contains[contains_amount]; //different concentrations of fluids are stored here
+	double containsBuffer[contains_amount];
 
-	//these are given in um/s^2
-	static const float diffusionCoefficients[number_of_substances];
-
-	//these are given in ms
-	float temperatureDiffusionTime = 100000.0f;
-	float diffusionTimes[number_of_substances];
+	static const float diffusionCoefficients[contains_amount];
 
 	ChemicalContainer* surroundingChunks[24]; //this only applies if the container in question actually is a chunk, if its a cell this remains empty
 	//the vector is ordered like this: 0-5 are the 6 direct neighbours, 6-13 are the 8 neighbours that are root(2) away and 14-23 are the 8 corners
@@ -64,11 +35,9 @@ public:
 
 	void DiffuseFromAndTo(ChemicalContainer* target, float t);
 
-	void DoReactions(float t, bool apply = true);
-
 	void ApplyContains() 
 	{ 
-		for (int i = 0; i < number_of_substances; i++)
+		for (int i = 0; i < contains_amount; i++)
 		{
 			contains[i] = containsBuffer[i];
 		}

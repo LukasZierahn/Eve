@@ -7,11 +7,14 @@ class Model;
 class ModelLoader;
 class Camera;
 class Input;
+class World;
 
 class RenderClass
 {
 public:
 	RenderClass(HWND);
+
+	void SetWorld(World* w) { world = w; }
 
 	void RenderFrame();
 
@@ -23,11 +26,13 @@ public:
 	void GetRasDesc(D3D11_RASTERIZER_DESC* rasDesc) { rasState->GetDesc(rasDesc); }
 	void GetSamplerState(ComPtr<ID3D11SamplerState>* sample) { samplerState.As(sample); }
 
-	ModelLoader* GetModelLoader() { return modLoad; };
-	Input* GetInput() { return inp; };
-	Camera* GetCamera() { return cam; };
+	ModelLoader* GetModelLoader() { return modLoad; }
+	Input* GetInput() { return inp; }
+	Camera* GetCamera() { return cam; }
 
 	int ModelCount() { return modelVector.size(); }
+
+	World* GetWorld() { return world; }
 
 	void SetFillMode(D3D11_FILL_MODE);
 
@@ -58,6 +63,8 @@ private:
 	Camera* cam = nullptr;
 	Input* inp = nullptr;
 	ModelLoader* modLoad = nullptr;
+
+	World* world = nullptr;
 };
 
 #endif

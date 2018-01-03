@@ -2,9 +2,7 @@
 #define __H__NeuralNetwork
 
 #include "Include.h"
-
-#define Number_of_input_Nodes 6
-#define Number_of_output_Nodes 2
+class DNA;
 
 class NeuralNetwork
 {
@@ -23,12 +21,23 @@ class NeuralNetwork
 	int hiddenToOutConCount = 0;
 	float* hiddenToOutCon;
 
-	int SetInputNodesMax = 0;
-public:
-	NeuralNetwork(int hiddenCount);
+	int InputNodesMax = 0;
 
-	void SetInputNodes(float* arr, int paramCount);
+public:
+	NeuralNetwork();
+
+	int GetOutputLayerCount() { return outputLayerCount; }
 	float GetOutputNode(int index) { return outputLayer[index]; }
+
+	int GetHiddenLayerCount() { return hiddenLayerCount; }
+
+	int GetInputLayerCount() { return inputLayerCount; }
+	float GetInputNode(int index) { return inputLayer[index]; }
+
+	void SetInputNodes(float* arr, int paramCount, bool compute);
+	void ComputeResult();
+
+	void BuildFromDNA(DNA* dna);
 
 	~NeuralNetwork();
 };

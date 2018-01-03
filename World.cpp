@@ -71,13 +71,13 @@ void World::GetChunkPos(float x, float y, float z, int* outX, int* outY, int* ou
 
 void World::KeepPointInBounds(float* x, float* y, float* z)
 {
-	if (*x < 0) *x = 0;
-	if (*y < 0) *y = 0;
-	if (*z < 0) *z = 0;
+	if (*x < 0) *x = chunkSize * (sizeX - 1) + *x;
+	if (*y < 0) *y = chunkSize * (sizeX - 1) + *y;
+	if (*z < 0) *z = chunkSize * (sizeX - 1) + *z;
 
-	if (*x > chunkSize * (sizeX - 1)) *x = chunkSize * (sizeX - 1);
-	if (*y > chunkSize * (sizeY - 1)) *y = chunkSize * (sizeY - 1);
-	if (*z > chunkSize * (sizeZ - 1)) *z = chunkSize * (sizeZ - 1);
+	if (*x > chunkSize * (sizeX - 1)) *x = *x - chunkSize * (sizeX);
+	if (*y > chunkSize * (sizeY - 1)) *y = *y - chunkSize * (sizeY);
+	if (*z > chunkSize * (sizeZ - 1)) *z = *z - chunkSize * (sizeZ);
 }
 
 string World::GetInfoWindowString()
@@ -111,7 +111,7 @@ string World::GetInfoWindowString()
 
 	buffer += " Currently in Chunk: " + to_string(chunkPosX) + "/" + to_string(chunkPosY) + "/" + to_string(chunkPosZ) + "\n";
 
-	for (int i = 0; i < number_of_substances; i++)
+	for (int i = 0; i < contains_amount; i++)
 	{
 		buffer += "  " + writtenSubstances[i] + ": " + to_string(GetChunk(chunkPosX, chunkPosY, chunkPosZ)->GetChemCon()->GetContains()[i]) + "\n";
 	}
@@ -119,8 +119,10 @@ string World::GetInfoWindowString()
 	return buffer;
 }
 
-void World::Tick(float t)
+void World::Tick(float inpT)
 {
+	float t = min(inpT, 100.0f);
+
 	for (int i = 0; i < chunkDiffusionArraySize; i++)
 	{
 		chunkDiffusionArray[i]->GetChemCon()->DiffuseToNeighbouringChunks(t);
@@ -133,7 +135,7 @@ void World::Tick(float t)
 
 	for (int i = 0; i < chunkArraySize; i++)
 	{
-		chunkArray[i]->GetChemCon()->DoReactions(t, true);
+		chunkArray[i]->GetChemCon()->ApplyContains();
 	}
 }
 

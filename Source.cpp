@@ -99,6 +99,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 
 	world = new World(render, 50, 10);
 	render->GetCamera()->SetWorld(world);
+	render->SetWorld(world);
 	infoWindow = new InfoWindow(hInstance, world);
 	cellInfoWindow = new CellInfoWindow(hInstance, world, render);
 
@@ -107,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	ShowWindow(hWnd, CmdShow);
 	UpdateWindow(hWnd);	
 
-	//world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
+	world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
 
 	//Initalising the Message loop
 	cellInfoWindow->SetClosestCellAsCurrentCell();
