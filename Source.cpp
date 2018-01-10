@@ -9,6 +9,7 @@
 #include "ChemicalContainer.h"
 #include "Camera.h"
 #include "CellInfoWindow.h"
+#include "Time.h"
 
 RenderClass* render = nullptr;
 InfoWindow* infoWindow = nullptr;
@@ -62,6 +63,8 @@ long long milliseconds_now()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, int CmdShow)
 {
+	srand(time(NULL));
+
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -108,7 +111,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	ShowWindow(hWnd, CmdShow);
 	UpdateWindow(hWnd);	
 
-	world->AddCell(new Cell(render, world, 50.0f, 50.0f, 50.0f));
+	world->AddCell(new Cell(render, world, nullptr, 50.0f, 50.0f, 50.0f));
 
 	//Initalising the Message loop
 	cellInfoWindow->SetClosestCellAsCurrentCell();

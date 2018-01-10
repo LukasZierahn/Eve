@@ -1,11 +1,14 @@
 #include "InfoWindow.h"
 #include "include.h"
 #include "world.h"
+#include "Camera.h"
+#include "RenderClass.h"
 
 InfoWindow::InfoWindow(HINSTANCE hIns, World* w)
 {
 	hInstance = hIns;
 	world = w;
+	cam = w->GetRenderClass()->GetCamera();
 
 	WNDCLASSEX wcex;
 
@@ -50,9 +53,10 @@ InfoWindow::InfoWindow(HINSTANCE hIns, World* w)
 
 void InfoWindow::WriteInfoData(int FPS)
 {
-	string buffer = "";
+	string buffer = world->GetInfoWindowString();
 
-	buffer = world->GetInfoWindowString();
+	XMFLOAT4* camPos = cam->GetPosition();
+	buffer += "\n x/y/z: " + to_string(camPos->x) + "/" + to_string(camPos->y) + "/" + to_string(camPos->z) + " \n";
 	buffer += " Fps: " + to_string(FPS) + " \n";
 
 	SetWindowText(textLabel, TEXT(buffer.c_str()));

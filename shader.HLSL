@@ -29,13 +29,13 @@ struct VS_OUTPUT
 VS_OUTPUT VS(float4 pos : position, float2 tex : TEXPOS)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.pos = mul(pos, rotation);
+	output.pos = mul(pos, scale);
+
+	output.pos = mul(output.pos, rotation);
 	output.pos = mul(position, output.pos);
 
 	output.pos = mul(worldPos, output.pos);
 	output.pos = mul(output.pos, worldRot);
-
-	output.pos = mul(output.pos, scale);
 
 	output.pos = mul(output.pos, view);
 	output.pos = mul(output.pos, projection);

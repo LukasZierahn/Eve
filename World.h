@@ -12,6 +12,7 @@ class World
 private:
 	int chunkSize; //this is given in micrometers, um = 10^-6 m
 	int chunkVolume; //this is given in um^3
+	int chunkSurfaceArea; //this is given in um^2
 	int sizeX, sizeY, sizeZ; //z is depth, this size is given in chunks, the real size is this size * chunksize
 	int clock;
 
@@ -32,12 +33,13 @@ public:
 	World(RenderClass* rndCls, int cSize, int s) : World(rndCls, cSize, s, s, s) {};
 	World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ);
 
-	void AddCell(Cell* c) { cellVec.push_back(c); };
+	void AddCell(Cell* c) { cellVec.push_back(c); cellVec.shrink_to_fit(); };
 
 	Chunk* GetChunk(int x, int y, int z);
 
 	float GetChemConFlowSpeed() { return chemConFlowSpeed; };
 	int GetChunkSize() { return chunkSize; };
+	RenderClass* GetRenderClass() { return render; };
 
 	int GetSizeX() { return sizeX; };
 	int GetSizeY() { return sizeY; };

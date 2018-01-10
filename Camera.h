@@ -5,6 +5,7 @@
 
 class RenderClass;
 class World;
+class Cell;
 
 class Camera
 {
@@ -28,6 +29,9 @@ private:
 
 	float rX, rZ;
 
+	Cell* currentCell = nullptr;
+	float eyePositionToCellScaling = 10.0f;
+
 	XMFLOAT4X4 view;
 	XMFLOAT4X4 projection;
 
@@ -38,6 +42,10 @@ private:
 public:
 	Camera(RenderClass*, RECT);
 	void UpdateConstBuffer();
+
+	void StopFollowingCell() { currentCell = nullptr; SetPosition(pos.x + (rX * eyePositionToCellScaling), pos.y + (roll * eyePositionToCellScaling) / XM_PIDIV2, pos.z + (rZ * eyePositionToCellScaling)); }
+	void FollowCell(Cell* c) { currentCell = c; }
+	bool IsFollowingACell() { return currentCell; }
 
 	void SetRotation(float, float, float);
 	void AddRotation(float, float, float);

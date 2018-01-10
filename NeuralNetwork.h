@@ -35,9 +35,10 @@ public:
 	float GetInputNode(int index) { return inputLayer[index]; }
 
 	void SetInputNodes(float* arr, int paramCount, bool compute);
+	void SetInputNode(int pos, float value) { inputLayer[pos] = value; }
 	void ComputeResult();
 
-	void BuildFromDNA(DNA* dna);
+	void BuildFromDNA(DNA* dna, int startpos);
 
 	~NeuralNetwork();
 };

@@ -6,6 +6,7 @@
 
 class RenderClass;
 class Texture;
+class DNA;
 
 class ModelLoader
 {

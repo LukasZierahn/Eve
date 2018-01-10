@@ -2,13 +2,13 @@
 #include "ChemicalContainer.h"
 #include "World.h"
 
-Chunk::Chunk(int x, int y, int z, World* w, int vol) : world(w)
+Chunk::Chunk(int x, int y, int z, World* w, float vol, float surArea) : world(w)
 {
 	this->x = x;
 	this->y = y;
 	this->z = z;
 
-	ChemCon = new ChemicalContainer(world, vol);
+	ChemCon = new ChemicalContainer(world, vol, surArea);
 }
 
 void Chunk::AquireNeighbours()

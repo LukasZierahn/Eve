@@ -50,7 +50,7 @@ void Input::Key(bool down, WPARAM mes)
 			if (rasDesc.FillMode == D3D11_FILL_SOLID)
 				render->SetFillMode(D3D11_FILL_WIREFRAME);
 			else
-				render->SetFillMode(D3D11_FILL_SOLID);
+				render->SetFillMode(D3D11_FILL_SOLID)                      ;
 		}
 		break;
 
@@ -59,6 +59,14 @@ void Input::Key(bool down, WPARAM mes)
 		{
 			cellInfoWindow->SetClosestCellAsCurrentCell();
 		}
+		break;
+
+	case('F'):
+		if (down)
+		{
+			cellInfoWindow->SwitchFollowingCurrentCell();
+		}
+		break;
 	}
 }
 

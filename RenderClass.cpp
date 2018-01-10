@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Input.h"
+#include "World.h"
+#include "Cell.h"
 
 RenderClass::RenderClass(HWND wndhandle)
 {
@@ -173,9 +175,9 @@ void RenderClass::RenderFrame()
 	deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
-	for (unsigned short i = 0; i < modelVector.size(); i++)
+	for (Cell* c : *world->GetCellVec())
 	{
-		modelVector[i]->Draw();
+		c->GetModel()->Draw();
 	}
 
 	swapChain->Present(0, 0);

@@ -10,19 +10,21 @@ class World;
 class Chunk;
 class DNA;
 class NeuralNetwork;
+class Trait;
+class NeuralNetworkInput;
 
-#define Type_Flagellum 1
+#define Type_Flagellum 0
+#define Type_Membrane 1
+#define Type_InformationFeeder 2
+#define Type_EnergyManager 3
+#define Type_SplittingManager 4
 
-//struct Trait
-{
-	void* pointer = nullptr;
-	int type = 0; //why cant i just store a reference to the type of class i am using?
-};
-
+#define Type_Absolute_Amount 5
 
 class Cell
 {
 private:
+	RenderClass* render = nullptr;
 	Model* mod = nullptr;
 
 	World* world = nullptr;
@@ -32,29 +34,49 @@ private:
 	DNA* dna = nullptr;
 	NeuralNetwork* neuralNet = nullptr;
 
-	int volume;
+	float volume;
+	float surfaceArea;
 	int chunkSize;
+	float size = 0.0f;
+	float length = 0.0f;
 
-	int ATP = 0;
+	bool hasMembrane = false;
+
+	float ATP = 0;
+
+	float buildingCost = 0;
 
 	XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };
 
+	vector<NeuralNetworkInput*> neuralInps;
 	vector<Trait*> traits;
 
 	const static string dnaCriteria[];
 public:
-	Cell(RenderClass* rndCls, World* world);
-	Cell(RenderClass* rndCls, World* world, float x, float y, float z);
+	Cell(RenderClass* rndCls, World* world, DNA* dna = nullptr);
+	Cell(RenderClass* rndCls, World* world, DNA* dna, float x, float y, float z);
 
 	void Tick(float t);
 	void CheckDNAForTraits();
 
+	World* GetWorld() { return world; }
+	bool BuildCell(float buildAmount) { buildingCost -= buildAmount; return buildingCost <= 0; }
+	float GetBuildingCost() { return buildingCost; }
+	float GetATP() { return ATP; }
+	float GetSurfaceArea() { return surfaceArea; }
+
 	Model* GetModel() { return mod; }
+	RenderClass* GetRenderClass() { return render; }
 	ChemicalContainer* GetChemCon() { return chemCon; }
 
+	XMFLOAT4* GetPosition() { return mod->GetPosition(); }
 	float GetPositionX() { return mod->GetPosition()->x; }
 	float GetPositionY() { return mod->GetPosition()->y; }
 	float GetPositionZ() { return mod->GetPosition()->z; }
+
+	void SetPosition(float x, float y, float z);
+	void SetPosition(XMFLOAT4* pos) { SetPosition(pos->x, pos->y, pos->z); }
+	void AddPosition(float x, float y, float z);
 
 	float GetSpeedX() { return velocity.x; }
 	float GetSpeedY() { return velocity.y; }
@@ -63,12 +85,11 @@ public:
 	void SetVelocity(XMFLOAT3* vel) { velocity = *vel; }
 	XMFLOAT3* GetVelocity() { return &velocity; }
 
+	void SetMembraneStatus(bool mem) { hasMembrane = mem; }
 	Chunk* GetCurrentChunk() { return chunk; }
 
 	NeuralNetwork* GetNeuralNetwork() { return neuralNet; }
 
-	void SetPosition(float x, float y, float z);
-	void AddPosition(float x, float y, float z);
 
 	string GetOutputString();
 

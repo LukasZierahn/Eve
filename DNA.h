@@ -12,8 +12,10 @@ class DNA
 
 public:
 	DNA();
+	DNA(string InpDNA);
 
 	void GenerateRandomDNA(int size);
+	DNA* CloneDNA();
 
 	string GetString() { return DNAString; }
 	string GetString(int start, int end) { return DNAString.substr(start, end); }

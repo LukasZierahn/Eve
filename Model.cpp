@@ -83,6 +83,19 @@ void Model::AddRotation(float R, float P, float Y)
 	yawn += Y;
 }
 
+void Model::SetScale(float x, float y, float z)
+{
+	XMFLOAT4X4 scl;
+	ZeroMemory(&scl, sizeof(XMFLOAT4X4));
+
+	scl._11 = x;
+	scl._22 = y;
+	scl._33 = z;
+	scl._44 = 1;
+
+	scale = scl;
+}
+
 void Model::SetPosition(float x, float y, float z)
 {
 	position = XMFLOAT4(x, y, z, 1);

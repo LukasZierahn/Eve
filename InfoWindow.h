@@ -3,6 +3,7 @@
 
 #include "include.h"
 class World;
+class Camera;
 
 class InfoWindow
 {
@@ -12,6 +13,7 @@ private:
 	HINSTANCE hInstance;
 
 	World* world;
+	Camera* cam;
 
 public:
 	InfoWindow(HINSTANCE hInstance, World* w);

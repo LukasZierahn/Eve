@@ -3,6 +3,8 @@
 #include "RenderClass.h"
 #include "World.h"
 
+#include "Cell.h"
+
 Camera::Camera(RenderClass* rend, RECT si)
 {
 	render = rend;
@@ -111,9 +113,20 @@ void inline Camera::UpdateViewMatrix()
 {
 	TurnRadiantsIntoXandZComponentSin(pitch, &rX, &rZ);
 
-	eyePos = pos;
+	if (currentCell)
+	{
+		pos = *currentCell->GetPosition();
 
-	focusPos = XMFLOAT4(pos.x + rX, pos.y + roll / -XM_PIDIV2, pos.z + rZ, 1);
+		eyePos = XMFLOAT4(pos.x + (rX * eyePositionToCellScaling), pos.y + (roll * eyePositionToCellScaling) / XM_PIDIV2, pos.z + (rZ * eyePositionToCellScaling), 1);
+
+		focusPos = pos;
+	}
+	else
+	{
+		eyePos = pos;
+
+		focusPos = XMFLOAT4(pos.x + rX, pos.y + roll / -XM_PIDIV2, pos.z + rZ, 1);
+	}
 
 	XMStoreFloat4x4(&view, XMMatrixLookAtLH(XMLoadFloat4(&eyePos), XMLoadFloat4(&focusPos), XMLoadFloat4(&upDir))); //shhhh we dont talk about how ineffecient this is
 }

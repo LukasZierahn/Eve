@@ -15,11 +15,14 @@ public:
 	Model(RenderClass*, float, float, float);
 	~Model();
 
-	void SetRotation(float, float, float);
-	void AddRotation(float, float, float);
 	void SetPosition(float, float, float);
 	void SetPosition(XMFLOAT4);
 	void AddPosition(float, float, float, bool = false);
+
+	void SetRotation(float, float, float);
+	void AddRotation(float, float, float);
+
+	void SetScale(float, float, float);
 
 	void SetData(ModelData* d) { data = d; };
 	ModelData** GetDataPointer() { return &data; };

@@ -48,7 +48,7 @@ CellInfoWindow::CellInfoWindow(HINSTANCE hIns, World* w, RenderClass* render)
 
 	RECT rect;
 	GetWindowRect(hWnd, &rect);
-	textLabel = CreateWindow("STATIC", "not initilized", WS_VISIBLE | WS_CHILD | SS_LEFT, 0, 0, rect.right, 600, hWnd, NULL, hInstance, NULL);
+	textLabel = CreateWindow("STATIC", "not initilized", WS_VISIBLE | WS_CHILD | SS_LEFT, 0, 0, rect.right, rect.bottom, hWnd, NULL, hInstance, NULL);
 	WriteInfoData();
 
 	ShowWindow(hWnd, 1);

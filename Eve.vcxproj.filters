@@ -37,11 +37,11 @@
     <Filter Include="Stuff thats not done">
       <UniqueIdentifier>{241355ce-e8b8-4afe-8b58-48449d45673f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\NeuralNetwork">
-      <UniqueIdentifier>{90ec8bc1-28b9-4464-996e-9f7fb423b1bd}</UniqueIdentifier>
+    <Filter Include="Header Files\Eve Header\Traits">
+      <UniqueIdentifier>{518ff6cc-7b8d-4c22-a93e-4bc17290c50d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\NeuralNetwork">
-      <UniqueIdentifier>{a8725a78-6e12-451e-a9a6-56a6fcafbc49}</UniqueIdentifier>
+    <Filter Include="Source Files\Eve\Traits">
+      <UniqueIdentifier>{3116c01f-675e-4281-a596-29810886b16c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -84,17 +84,38 @@
     <ClInclude Include="HardwareAcceleration.h">
       <Filter>Stuff thats not done</Filter>
     </ClInclude>
-    <ClInclude Include="NeuralNetwork.h">
-      <Filter>Header Files\NeuralNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="CellInfoWindow.h">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="DNA.h">
       <Filter>Header Files\Eve Header</Filter>
     </ClInclude>
-    <ClInclude Include="Flagellum.h">
+    <ClInclude Include="NeuralNetwork.h">
       <Filter>Header Files\Eve Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Trait.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Flagellum.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Membrane.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="EnergyManager.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="SplittingManager.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="IncludeTraits.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="InformationFeeder.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetworkInput.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -137,17 +158,35 @@
     <ClCompile Include="HardwareAcceleration.cpp">
       <Filter>Stuff thats not done</Filter>
     </ClCompile>
-    <ClCompile Include="NeuralNetwork.cpp">
-      <Filter>Source Files\NeuralNetwork</Filter>
-    </ClCompile>
     <ClCompile Include="CellInfoWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="DNA.cpp">
       <Filter>Source Files\Eve</Filter>
     </ClCompile>
-    <ClCompile Include="Flagellum.cpp">
+    <ClCompile Include="NeuralNetwork.cpp">
       <Filter>Source Files\Eve</Filter>
+    </ClCompile>
+    <ClCompile Include="EnergyManager.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="Membrane.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="Flagellum.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="Trait.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="SplittingManager.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuralNetworkInput.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="InformationFeeder.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

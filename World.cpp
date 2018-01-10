@@ -10,6 +10,7 @@ World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 	render = rndCls;
 	chunkSize = cSize;
 	chunkVolume = pow(chunkSize, 3);
+	chunkSurfaceArea = 6 * pow(chunkSize, 2);
 	sizeX = sX;
 	sizeY = sY;
 	sizeZ = sZ;
@@ -26,7 +27,7 @@ World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 		{
 			for (int z = 0; z < sizeZ; z++)
 			{
-				chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z] = new Chunk(x, y, z, this, chunkVolume);
+				chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z] = new Chunk(x, y, z, this, chunkVolume, chunkSurfaceArea);
 				if ((z + x + y) % 2 == 0)
 				{
 					chunkDiffusionArray[chunkDiffusionArrayCounter] = chunkArray[z * y * x];
@@ -71,13 +72,13 @@ void World::GetChunkPos(float x, float y, float z, int* outX, int* outY, int* ou
 
 void World::KeepPointInBounds(float* x, float* y, float* z)
 {
-	if (*x < 0) *x = chunkSize * (sizeX - 1) + *x;
-	if (*y < 0) *y = chunkSize * (sizeX - 1) + *y;
-	if (*z < 0) *z = chunkSize * (sizeX - 1) + *z;
+	while (*x < 0) { *x = chunkSize * (sizeX - 1) + *x; }
+	while (*y < 0) { *y = chunkSize * (sizeX - 1) + *y; }
+	while (*z < 0) { *z = chunkSize * (sizeX - 1) + *z; }
 
-	if (*x > chunkSize * (sizeX - 1)) *x = *x - chunkSize * (sizeX);
-	if (*y > chunkSize * (sizeY - 1)) *y = *y - chunkSize * (sizeY);
-	if (*z > chunkSize * (sizeZ - 1)) *z = *z - chunkSize * (sizeZ);
+	while (*x > chunkSize * (sizeX)) { *x = *x - chunkSize * (sizeX); }
+	while (*y > chunkSize * (sizeY)) { *y = *y - chunkSize * (sizeY); }
+	while (*z > chunkSize * (sizeZ)) { *z = *z - chunkSize * (sizeZ); }
 }
 
 string World::GetInfoWindowString()
@@ -128,9 +129,9 @@ void World::Tick(float inpT)
 		chunkDiffusionArray[i]->GetChemCon()->DiffuseToNeighbouringChunks(t);
 	}
 
-	for (Cell* c : cellVec)
+	for (int i = 0; i < cellVec.size(); i++)
 	{
-		c->Tick(t);
+		cellVec[i]->Tick(t);
 	}
 
 	for (int i = 0; i < chunkArraySize; i++)
