@@ -197,4 +197,9 @@
       <Filter>Stuff thats not done</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="todo.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

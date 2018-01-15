@@ -11,18 +11,23 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 
 	volume = pCell->GetChemCon()->GetVolume();
 
-	//accel and max speed are influenced by the first two dna characters, max speed more by the first and accel more by the second
-	accelSpeed = dna->GetCharacter(startpos) / 500.0f;
-	maxSpeed = dna->GetCharacter(startpos + 1) / 100.0f;
+	dna->SetCurrentPosition(startpos);
 
-	maxSpeed += dna->GetCharacter(startpos + 1) / 500.0f;
-	accelSpeed += dna->GetCharacter(startpos + 1) / 150.0f;
+	float firstValue = dna->GetGeneFloat(0, 1);
+	float secondValue = dna->GetGeneFloat(0, 1);
+
+	//accel and max speed are influenced by the first two dna characters, max speed more by the first and accel more by the second
+	accelSpeed = firstValue / 50.0f;
+	maxSpeed = firstValue / 10.0f;
+
+	maxSpeed += secondValue / 50.0f;
+	accelSpeed += secondValue / 15.0f;
 
 	energyRequierement = pow(maxSpeed, 2) + pow(accelSpeed, 2);
 
-	XNeuralNetNode = dna->GetCharacter(startpos + 2) % neuralNet->GetOutputLayerCount();
-	YNeuralNetNode = dna->GetCharacter(startpos + 3) % neuralNet->GetOutputLayerCount();
-	ZNeuralNetNode = dna->GetCharacter(startpos + 4) % neuralNet->GetOutputLayerCount();
+	XNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
+	YNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
+	ZNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 }
 
 float Flagellum::Tick(int t)

@@ -46,15 +46,16 @@ void NeuralNetwork::ComputeResult()
 
 void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 {
+	dna->SetCurrentPosition(startpos);
 
-	inputLayerCount = max(dna->GetCharacter(startpos) / 3, 1);
+	inputLayerCount = dna->GetGeneInt(1, 15);
 	inputLayer = new float[inputLayerCount];
 	for (int i = 0; i < inputLayerCount; i++)
 	{
 		inputLayer[i] = 0.0f;
 	}
 
-	outputLayerCount = max(dna->GetCharacter(startpos + 1) / 3, 1);
+	outputLayerCount = dna->GetGeneInt(1, 15);
 	outputLayer = new float[outputLayerCount];
 	for (int i = 0; i < outputLayerCount; i++)
 	{
@@ -62,7 +63,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	}
 
 
-	hiddenLayerCount = dna->GetCharacter(startpos + 2) / 3;
+	hiddenLayerCount = dna->GetGeneInt(1, 15);
 	hiddenLayer = new float[hiddenLayerCount];
 	for (int i = 0; i < hiddenLayerCount; i++)
 	{
@@ -74,7 +75,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	inpToHiddenCon = new float[inpToHiddenConCount];
 	for (int i = 0; i < inpToHiddenConCount; i++)
 	{
-		inpToHiddenCon[i] = dna->GetCharacter(i + startpos + 3) * 1.0f / UniqCharsInDNA;
+		inpToHiddenCon[i] = dna->GetGeneFloatFromSingleChar(-1, 1);
 	}
 
 
@@ -82,7 +83,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	hiddenToOutCon = new float[hiddenToOutConCount];
 	for (int i = 0; i < hiddenToOutConCount; i++)
 	{
-		hiddenToOutCon[i] = dna->GetCharacter(i + startpos + 4 + inpToHiddenConCount) * 1.0f / UniqCharsInDNA;
+		hiddenToOutCon[i] = dna->GetGeneFloatFromSingleChar(-1, 1);
 	}
 }
 

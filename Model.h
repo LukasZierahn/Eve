@@ -6,11 +6,14 @@
 class RenderClass;
 class Texture;
 
-//defining a Model that will be inherited
+//yes it would have been way more neat to actually inherit Models but as I overtook the code from an older project; i kept this quirk
+//due to time constrains, as it is quiet an sizeable change to meddle with every line in which the Model class gets called.
+//I did not fully grasped abstract classes at the time i wrote it and admittetly also at the time i started the project, today i would do it differently.
+
+//defining a Model that will (not) be inherited
 class Model
 {
 public:
-	Model() { };
 	Model(RenderClass*);
 	Model(RenderClass*, float, float, float);
 	~Model();
@@ -21,8 +24,12 @@ public:
 
 	void SetRotation(float, float, float);
 	void AddRotation(float, float, float);
+	XMFLOAT3 GetRotation() { return XMFLOAT3(roll, pitch, yawn); }
+
 
 	void SetScale(float, float, float);
+
+	XMFLOAT4X4* GetScale() { return &scale; }
 
 	void SetData(ModelData* d) { data = d; };
 	ModelData** GetDataPointer() { return &data; };
@@ -30,6 +37,7 @@ public:
 	Texture** GetTexturePointer() { return &tex; };
 
 	XMFLOAT4* GetPosition() { return &position; }
+	XMFLOAT4 GetBoundingBox(); //this an XMFloat4, Add and Subtract each Value to the corresponding value from the current model positiong to get a two points for the bounding box
 
 	void Draw();
 
@@ -47,6 +55,8 @@ private:
 	Texture* tex = nullptr;
 
 	ModelBuffer modBufHeader;
+
+	float biggestScale = 0.0f;
 
 protected:
 	XMFLOAT4 position;

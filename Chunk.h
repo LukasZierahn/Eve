@@ -13,7 +13,7 @@ private:
 	World* world = nullptr;
 
 public:
-	Chunk(int x, int y, int z, World* world, float vol, float surArea);
+	Chunk(int posX, int posY, int posZ, World* world, float vol, float surArea);
 
 	void AquireNeighbours();
 	ChemicalContainer* GetChemCon() { return ChemCon; };

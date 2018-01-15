@@ -37,8 +37,13 @@ private:
 	float volume;
 	float surfaceArea;
 	int chunkSize;
+	
 	float size = 0.0f;
 	float length = 0.0f;
+	float swellPercent = 1.0f; //if this reaches 1.25 then the cell dies
+
+	unsigned long parentID = 0;
+	unsigned long ID = 0;
 
 	bool hasMembrane = false;
 
@@ -53,7 +58,7 @@ private:
 
 	const static string dnaCriteria[];
 public:
-	Cell(RenderClass* rndCls, World* world, DNA* dna = nullptr);
+	Cell(RenderClass* rndCls, World* world, DNA* dna = nullptr, Cell* pCell = nullptr);
 	Cell(RenderClass* rndCls, World* world, DNA* dna, float x, float y, float z);
 
 	void Tick(float t);
@@ -83,7 +88,11 @@ public:
 	float GetSpeedZ() { return velocity.z; }
 
 	void SetVelocity(XMFLOAT3* vel) { velocity = *vel; }
+	void AddVelocity(XMFLOAT3* vel) { velocity.x += vel->x; velocity.y += vel->y; velocity.z += vel->z; }
+	void AddVelocity(float x, float y, float z) { velocity.x += x; velocity.y += y; velocity.z += z; }
 	XMFLOAT3* GetVelocity() { return &velocity; }
+
+	float GetSize() { return size; }
 
 	void SetMembraneStatus(bool mem) { hasMembrane = mem; }
 	Chunk* GetCurrentChunk() { return chunk; }

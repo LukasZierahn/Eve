@@ -1,48 +1,11 @@
-﻿  Cell.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\membrane.h(30): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.cpp(64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.cpp(79): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  Generating Code...
-  Compiling...
+﻿  Skipping... (no relevant changes detected)
   World.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(12): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(13): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(19): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(60): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(68): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.cpp(132): warning C4018: '<': signed/unsigned mismatch
   SplittingManager.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\membrane.h(30): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
+  RenderClass.cpp
   Membrane.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\membrane.h(30): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\membrane.cpp(28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   InformationFeeder.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\informationfeeder.cpp(26): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Flagellum.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
   EnergyManager.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\dna.h(24): warning C4018: '<': signed/unsigned mismatch
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\energymanager.cpp(22): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\energymanager.cpp(24): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  Chunk.cpp
-  ChemicalContainer.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\membrane.h(30): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\chemicalcontainer.cpp(82): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
   CellInfoWindow.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cellinfowindow.cpp(26): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cellinfowindow.cpp(31): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
-  Generating Code...
-  Source.cpp
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(66): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(76): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(81): warning C4302: 'type cast': truncation from 'LPSTR' to 'WORD'
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(131): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(145): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\yaso\documents\visual studio 2017\projects\eve\eve\source.cpp(150): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Camera.cpp
   Eve.vcxproj -> C:\Users\Yaso\Documents\Visual Studio 2017\Projects\Eve\Debug\Eve.exe

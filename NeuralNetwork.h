@@ -28,6 +28,7 @@ public:
 
 	int GetOutputLayerCount() { return outputLayerCount; }
 	float GetOutputNode(int index) { return outputLayer[index]; }
+	float GetUnsignedOutputNode(int index) { return (outputLayer[index] + 1) / 2; }
 
 	int GetHiddenLayerCount() { return hiddenLayerCount; }
 

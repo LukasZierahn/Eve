@@ -4,6 +4,7 @@
 #include "Cell.h"
 #include "ChemicalContainer.h"
 #include "Camera.h"
+#include "Model.h"
 
 World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 {
@@ -28,11 +29,6 @@ World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 			for (int z = 0; z < sizeZ; z++)
 			{
 				chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z] = new Chunk(x, y, z, this, chunkVolume, chunkSurfaceArea);
-				if ((z + x + y) % 2 == 0)
-				{
-					chunkDiffusionArray[chunkDiffusionArrayCounter] = chunkArray[z * y * x];
-					chunkDiffusionArrayCounter++;
-				}
 			}
 		}
 	}
@@ -43,16 +39,20 @@ World::World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ)
 		{
 			for (int z = 0; z < sizeZ; z++)
 			{
-				chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z]->AquireNeighbours();
+				if ((z + x + y) % 2 == 0)
+				{
+					chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z]->AquireNeighbours();
+					chunkDiffusionArray[chunkDiffusionArrayCounter] = chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z];
+					chunkDiffusionArrayCounter++;
+				}
 			}
 		}
 	}
-
 }
 
-Chunk* World::GetChunk(int x, int y, int z)
+Chunk* World::GetChunk(int posX, int posY, int posZ)
 {
-	return chunkArray[(x * sizeZ * sizeY) + (y * sizeZ) + z];
+	return chunkArray[(posX * sizeZ * sizeY) + (posY * sizeZ) + posZ];
 }
 
 void World::GetChunkPos(float x, float y, float z, int* outX, int* outY, int* outZ)
@@ -79,6 +79,37 @@ void World::KeepPointInBounds(float* x, float* y, float* z)
 	while (*x > chunkSize * (sizeX)) { *x = *x - chunkSize * (sizeX); }
 	while (*y > chunkSize * (sizeY)) { *y = *y - chunkSize * (sizeY); }
 	while (*z > chunkSize * (sizeZ)) { *z = *z - chunkSize * (sizeZ); }
+}
+
+bool World::CheckIfModelsIntersect(Model * mod1, Model * mod2)
+{
+	XMFLOAT4* mod1Pos = mod1->GetPosition();
+	XMFLOAT4 mod1Box = mod1->GetBoundingBox();
+
+	XMFLOAT4* mod2Pos = mod2->GetPosition();
+	XMFLOAT4 mod2Box = mod2->GetBoundingBox();
+
+	if (abs(mod1Box.x - mod2Box.x) > abs(mod1Pos->x - mod2Pos->x))
+		return false;
+	if (abs(mod1Box.y - mod2Box.y) > abs(mod1Pos->y - mod2Pos->y))
+		return false;
+	if (abs(mod1Box.z - mod2Box.z) > abs(mod1Pos->z - mod2Pos->z))
+		return false;
+
+	/*for (int i = 0; i < 8; i++)
+	{
+		if (mod1Pos->x + (mod1Box.x * ((i / 4) * 2 - 1))  < mod2Pos->x + mod2Box.x && mod1Pos->x + mod1Box.x * ((i / 4) * 2 - 1) > mod2Pos->x - mod2Box.x)
+		{
+			if (mod1Pos->y - mod1Box.y < mod2Pos->y + mod2Box.y && mod1Pos->y + mod1Box.y > mod2Pos->y - mod2Box.y)
+			{
+				if (mod1Pos->z - mod1Box.z < mod2Pos->z + mod2Box.z && mod1Pos->z + mod1Box.z > mod2Pos->z - mod2Box.z)
+				{
+					return true;
+				}
+			}
+		}
+	}*/
+	return true;
 }
 
 string World::GetInfoWindowString()
@@ -132,6 +163,27 @@ void World::Tick(float inpT)
 	for (int i = 0; i < cellVec.size(); i++)
 	{
 		cellVec[i]->Tick(t);
+	}
+
+
+	for (int i = 0; i < cellVec.size(); i++)
+	{
+		for (int j = i + 1; j < cellVec.size(); j++)
+		{
+			if (CheckIfModelsIntersect(cellVec[i]->GetModel(), cellVec[j]->GetModel()))
+			{
+				XMFLOAT4* iCellPos = cellVec[i]->GetPosition();
+				XMFLOAT4* jCellPos = cellVec[j]->GetPosition();
+
+				float distance = sqrt(pow(iCellPos->x - jCellPos->x, 2) + pow(iCellPos->y - jCellPos->y, 2) + pow(iCellPos->z - jCellPos->z, 2));
+
+				float test2 = iCellPos->x - jCellPos->x / distance;
+				float test = asin((iCellPos->x - jCellPos->x) / distance);
+
+				cellVec[i]->AddVelocity(asin((iCellPos->x - jCellPos->x) / distance) * DriftingSpeed * t, asin((iCellPos->y - jCellPos->y) / distance) * DriftingSpeed * t, -asin((iCellPos->z - jCellPos->z) / distance) * DriftingSpeed * t);
+				cellVec[j]->AddVelocity(-asin((iCellPos->x - jCellPos->x) / distance) * DriftingSpeed * t, -asin((iCellPos->y - jCellPos->y) / distance) * DriftingSpeed * t, asin((iCellPos->z - jCellPos->z) / distance) * DriftingSpeed * t);
+			}
+		}
 	}
 
 	for (int i = 0; i < chunkArraySize; i++)

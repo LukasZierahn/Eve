@@ -12,8 +12,9 @@
 
 const string Cell::dnaCriteria[] = { "Fl", "Me", "i", "e", "s" };
 
-Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA) : render(rndCls)
+Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render(rndCls)
 {
+	ID = world->GetNextID();
 	velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	dna = InpDNA;
@@ -22,24 +23,37 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA) : render(rndCls)
 		dna = new DNA();
 		dna->GenerateRandomDNA(1000);
 	}
+	dna->SetCurrentPosition(0);
 
 	OutputDebugString((dna->GetString() + "\n").c_str());
 
 	chunkSize = world->GetChunkSize();
 
-	size = (dna->GetCharacter(3) + dna->GetCharacter(4) + dna->GetCharacter(5) + dna->GetCharacter(6)) / 100.0f;
-	length = (dna->GetCharacter(7) + dna->GetCharacter(8) + dna->GetCharacter(9) + dna->GetCharacter(10)) / 100.0f;
+	size = dna->GetGeneFloat(0.1, 10);
+	length = dna->GetGeneFloat(0, 10);
 
-	surfaceArea = 4 * pow(2 * chunkSize / 10 * size * length, 2) + pow(chunkSize / 10 * size * (length + 1), 2) * 4;
-	volume = 2 * pow(2 * chunkSize / 10 * size * length, 2) + pow(chunkSize / 10 * size * (length + 1), 3);
+	//all cells are oblate Spheres as length is >= 0
+
+	float e = sqrt(1 - (pow(size, 2) / pow(size + length, 2)));
+	surfaceArea = XM_PI * (2 * pow(size + length, 2) + pow(size, 2) * log((1 + e) / (1 - e)) / e);
+	volume = 4/3 * (size + length) * pow(size, 2) * XM_PI;
 
 	mod = new Model(rndCls);
 	mod->SetScale(size + length, size, size);
 	this->world = world;
-	chemCon = new ChemicalContainer(world, volume, surfaceArea);
+
+	if (pCell)
+	{
+		parentID = pCell->ID;
+		chemCon = new ChemicalContainer(world, volume, surfaceArea, pCell->chemCon);
+	}
+	else
+	{
+		chemCon = new ChemicalContainer(world, volume, surfaceArea);
+	}
 
 
-	rndCls->GetModelLoader()->GetModel("Cell", mod->GetDataPointer());
+	rndCls->GetModelLoader()->GetModel("Sphere", mod->GetDataPointer());
 	rndCls->GetModelLoader()->GetTexture("Cell", mod->GetTexturePointer());
 
 	neuralNet = new NeuralNetwork();
@@ -63,7 +77,6 @@ void Cell::Tick(float t)
 	XMFLOAT4 pos = *mod->GetPosition();
 	chunk = world->GetChunk(floor(pos.x / chunkSize), floor(pos.y / chunkSize), floor(pos.z / chunkSize));
 
-
 	for (NeuralNetworkInput* nI : neuralInps)
 	{
 		nI->InputValuesToNeuralNetwork();
@@ -80,21 +93,25 @@ void Cell::Tick(float t)
 	}
 
 	chemCon->ApplyContains();
+	chunk->GetChemCon()->ApplyContains();
+
+
+	swellPercent += chemCon->GetSwellAmount(chunk->GetChemCon()) * t / volume;
 
 	float velocityLength = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2) + pow(velocity.z, 2));
 
 	//this is drag by the water
 	if (velocityLength != 0)
 	{
-		velocity.x = velocity.x / (pow(velocityLength, 2) + 1);
+		velocity.x = velocity.x / (pow(velocityLength, 2) + 1); //if things go slow then and this pow is kept then the sqrt in velocityLength is maybe redundant
 		velocity.y = velocity.y / (pow(velocityLength, 2) + 1);
 		velocity.z = velocity.z / (pow(velocityLength, 2) + 1);
 
-
-		mod->SetRotation(asin(velocity.x / velocityLength), asin(velocity.y / velocityLength), -asin(velocity.z / velocityLength));
+		mod->SetRotation(0, asin(velocity.x / velocityLength), asin(velocity.y/ velocityLength));
 	}
 
 	mod->AddPosition(velocity.x, velocity.y, velocity.z);
+	mod->SetScale(swellPercent * (size + length), size * swellPercent, size * swellPercent);
 }
 
 void Cell::CheckDNAForTraits()
@@ -129,7 +146,7 @@ void Cell::CheckDNAForTraits()
 
 				if (i == Type_EnergyManager)
 				{
-					traits.push_back(new EnergyManager(this, dna, searchStart));
+					//traits.push_back(new EnergyManager(this, dna, searchStart));
 					break;
 				}
 
@@ -173,10 +190,12 @@ string Cell::GetOutputString()
 	XMFLOAT4 pos = *mod->GetPosition();
 	string buffer = "";
 
+	buffer += " Cell ID: " + to_string(ID) + "\n";
 	buffer += " Cell Position: " + to_string(pos.x) + "/" + to_string(pos.y) + "/" + to_string(pos.z) + "\n";
 	buffer += " Cell Speed: " + to_string(velocity.x) + "/" + to_string(velocity.y) + "/" + to_string(velocity.z) + "\n";
 	buffer += " Cell Volume/surface: " + to_string(volume) + "/" + to_string(surfaceArea) + "\n";
-	buffer += " Cell size/length: "  + to_string(size) + "/" + to_string(length) +  "\n";
+	buffer += " Cell size/length: " + to_string(size) + "/" + to_string(length) + "\n";
+	buffer += " Cell Swell Percent: "  + to_string(swellPercent) + "\n";
 	buffer += " Cell Speed: " + to_string(velocity.x) + "/" + to_string(velocity.y) + "/" + to_string(velocity.z) + "\n";
 	buffer += " Cell ATP: " + to_string(ATP) + "\n\n";
 

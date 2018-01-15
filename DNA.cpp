@@ -8,6 +8,7 @@ DNA::DNA()
 DNA::DNA(string InpDNA)
 {
 	DNAString = InpDNA;
+	DNALength = DNAString.size();
 }
 
 void DNA::GenerateRandomDNA(int size)
@@ -19,6 +20,8 @@ void DNA::GenerateRandomDNA(int size)
 		DNAString.append({ static_cast<char> ((rand() % UniqCharsInDNA) + 32) });
 		//DNAString.append({ static_cast<char> (94 + 32) });
 	}
+
+	DNALength = DNAString.size();
 }
 
 DNA* DNA::CloneDNA()
@@ -55,6 +58,25 @@ DNA* DNA::CloneDNA()
 	return new DNA(ClonedDNAString);
 }
 
+float DNA::GetGeneFloat(float min, float max)
+{
+	currentPos += 4;
+
+	return (((GetCharacter((currentPos - 4) % DNALength) + GetCharacter((currentPos - 3) % DNALength) + GetCharacter((currentPos - 2) % DNALength) + GetCharacter((currentPos - 1) % DNALength)) * (max - min)) / (UniqCharsInDNA * 4)) + min;}
+
+float DNA::GetGeneFloatFromSingleChar(float min, float max)
+{
+	currentPos++;
+	
+	return (GetCharacter((currentPos - 1) % DNALength) * (max - min) / UniqCharsInDNA) + min;
+}
+
+int DNA::GetGeneInt(int min, int max)
+{
+	currentPos += 4;
+
+	return (((GetCharacter((currentPos - 4) % DNALength) + GetCharacter((currentPos - 3) % DNALength) + GetCharacter((currentPos - 2) % DNALength) + GetCharacter((currentPos - 1) % DNALength)) * (max - min)) / (UniqCharsInDNA * 4)) + min;
+}
 
 DNA::~DNA()
 {

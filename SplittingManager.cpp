@@ -9,9 +9,10 @@ SplittingManager::SplittingManager(Cell* parentCell, DNA* dna, int startpos)
 	pCell = parentCell;
 	neuralNet = pCell->GetNeuralNetwork();
 	this->dna = dna;
+	dna->SetCurrentPosition(startpos);
 
-	buildingOutputNode = dna->GetCharacter(startpos) % neuralNet->GetOutputLayerCount();
-	buildingOutputNode = dna->GetCharacter(startpos + 1) % neuralNet->GetOutputLayerCount();
+	buildingOutputNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
+	buildingOutputNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 }
 
 float SplittingManager::Tick(int t)
@@ -20,7 +21,7 @@ float SplittingManager::Tick(int t)
 
 	if (!splittingCell)
 	{
-		if (rand() % 10000 == 0)
+		if (false)//rand() % 10000 == 0)
 		{
 			splittingCell = new Cell(pCell->GetRenderClass(), pCell->GetWorld(), dna->CloneDNA());
 			totalCost = splittingCell->GetBuildingCost();
@@ -28,12 +29,13 @@ float SplittingManager::Tick(int t)
 	}
 	else
 	{
-		ATPchange = pCell->GetATP() * neuralNet->GetOutputNode(buildingOutputNode) * t;
+		ATPchange = pCell->GetATP() * neuralNet->GetUnsignedOutputNode(buildingOutputNode) * t;
 
-		if (splittingCell->BuildCell(pCell->GetATP() * neuralNet->GetOutputNode(buildingOutputNode) * t))
+		if (splittingCell->BuildCell(pCell->GetATP() * neuralNet->GetUnsignedOutputNode(buildingOutputNode) * t))
 		{
 			splittingCell->SetPosition(pCell->GetPosition());
-			splittingCell->AddPosition(2, 0, 0);
+			splittingCell->AddPosition(splittingCell->GetSize() / 3, splittingCell->GetSize() / 3, splittingCell->GetSize() / 3);
+			pCell->AddPosition(-pCell->GetSize() / 3, -pCell->GetSize() / 3, -pCell->GetSize() / 3);
 			pCell->GetWorld()->AddCell(splittingCell);
 			splittingCell = nullptr;
 		}
@@ -56,7 +58,7 @@ string SplittingManager::GetOutputString()
 	}
 
 	buffer += "  OutputNode: " + to_string(buildingOutputNode) + " InputNode: " + to_string(buildingInputNode)
-		+ "\n        " + to_string(neuralNet->GetOutputNode(buildingOutputNode));
+		+ "\n        " + to_string(neuralNet->GetUnsignedOutputNode(buildingOutputNode));
 
 	return buffer;
 }

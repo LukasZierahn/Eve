@@ -11,13 +11,15 @@ EnergyManager::EnergyManager(Cell* parentCell, DNA* dna, int startpos)
 	neuralNet = pCell->GetNeuralNetwork();
 	chemCon = pCell->GetChemCon();
 
-	conversionNeuralNode = dna->GetCharacter(startpos) % neuralNet->GetOutputLayerCount();
-	conversionCapabilities = dna->GetCharacter(startpos + 1) * 1.0f / UniqCharsInDNA;
+	dna->SetCurrentPosition(startpos);
+
+	conversionNeuralNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
+	conversionCapabilities = dna->GetGeneFloat(0, 1);
 }
 
 float EnergyManager::Tick(int t)
 {
-	double conversionATP = neuralNet->GetOutputNode(conversionNeuralNode) * conversionCapabilities * chemCon->GetContains(FOOD_CHEMCON_ID) * CONVERSION_CONSTANT / chemCon->GetVolume();
+	double conversionATP = neuralNet->GetUnsignedOutputNode(conversionNeuralNode) * conversionCapabilities * chemCon->GetContains(FOOD_CHEMCON_ID) * CONVERSION_CONSTANT / chemCon->GetVolume();
 
 	chemCon->AddSubstanceToContains(FOOD_CHEMCON_ID,-conversionATP);
 
@@ -30,7 +32,7 @@ string EnergyManager::GetOutputString()
 
 	buffer += "  CC: " + to_string(conversionCapabilities);
 	buffer += "\n  Output Nodes: " + to_string(conversionNeuralNode) + "\n        "
-		+ to_string(neuralNet->GetOutputNode(conversionNeuralNode)) + "\n";
+		+ to_string(neuralNet->GetUnsignedOutputNode(conversionNeuralNode)) + "\n";
 
 	return buffer;
 }

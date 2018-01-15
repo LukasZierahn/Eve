@@ -23,7 +23,7 @@ class ChemicalContainer
 	float temperature; //this is given in degree Celcius, so that we operate closer to the 0 and thus the float is more precises
 	float surfaceArea;
 
-	short amountOfNeightbouringChunks = 0;
+	int amountOfNeightbouringChunks = 0;
 
 	World* world;
 
@@ -36,13 +36,15 @@ class ChemicalContainer
 	//the vector is ordered like this: 0-5 are the 6 direct neighbours
 
 public:
-	ChemicalContainer(World* world, float volume, float surfaceArea);
+	ChemicalContainer(World* world, float volume, float surfaceArea, ChemicalContainer* splittingFrom = nullptr);
 	
 	void DiffuseToNeighbouringChunks(float t);
 
 	void DiffuseFromAndTo(ChemicalContainer* target, float t);
 	void DiffuseFromAndTo(ChemicalContainer* target, float t, float surfaceArea);
 	float DiffuseFromAndTo(ChemicalContainer* target, float t, Membrane* membrane);
+
+	float GetSwellAmount(ChemicalContainer* target);
 
 	void ApplyContains() 
 	{ 
@@ -52,7 +54,11 @@ public:
 		}
 	};
 
-	void AddSurroundingChunk(ChemicalContainer* newCem) { surroundingChunks[amountOfNeightbouringChunks] = newCem; amountOfNeightbouringChunks++; };
+	void AddSurroundingChunk(ChemicalContainer* newCem) 
+	{ 
+		surroundingChunks[amountOfNeightbouringChunks] = newCem;
+		amountOfNeightbouringChunks++; 
+	}
 
 	double* GetContains() { return contains; }
 	double GetContains(int pos) { return contains[pos]; }

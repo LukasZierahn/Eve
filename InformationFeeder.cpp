@@ -11,10 +11,12 @@ InformationFeeder::InformationFeeder(Cell* parentCell, DNA* dna, int startingPos
 	neuralNet = pCell->GetNeuralNetwork();
 	chemCon = pCell->GetChemCon();
 
-	temperatureInputNode = dna->GetCharacter(startingPos + 1) % neuralNet->GetInputLayerCount();
+	dna->SetCurrentPosition(startingPos);
+
+	temperatureInputNode = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
 	for (int i = 0; i < contains_amount; i++)
 	{
-		containsInputNode[i] = dna->GetCharacter(startingPos + i + 1) % neuralNet->GetInputLayerCount();
+		containsInputNode[i] = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
 	}
 }
 

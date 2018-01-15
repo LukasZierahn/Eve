@@ -31,6 +31,15 @@ Model::Model(RenderClass* rndCls, float x, float y, float z)
 	position = XMFLOAT4(x, y, z, 1);
 }
 
+XMFLOAT4 Model::GetBoundingBox()
+{
+	XMFLOAT4 returnValue;
+
+	XMStoreFloat4(&returnValue, XMVector4Transform(XMVECTOR(XMLoadFloat4(&XMFLOAT4(scale._11 * 2, scale._22, scale._33, 1.0f))), XMMatrixRotationRollPitchYaw(roll, pitch, yawn)));
+
+	return returnValue;
+}
+
 void Model::Draw()
 {
 	if (data != nullptr && data->initialized)
