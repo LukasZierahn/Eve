@@ -103,7 +103,7 @@ void Camera::AddPosition(float x, float y, float z, bool bounds)
 
 	if (bounds)
 	{
-		world->KeepPointInBounds(&x, &y, &z);
+		world->KeepPointInBounds(&pos.x, &pos.y, &pos.z);
 	}
 
 	UpdateViewMatrix();

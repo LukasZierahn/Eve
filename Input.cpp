@@ -3,7 +3,9 @@
 #include "Camera.h"
 #include "RenderClass.h"
 #include "Include.h"
+
 #include "CellInfoWindow.h"
+#include "World.h"
 
 Input::Input(RenderClass* RndCls, RECT rect)
 {
@@ -65,6 +67,18 @@ void Input::Key(bool down, WPARAM mes)
 		if (down)
 		{
 			cellInfoWindow->SwitchFollowingCurrentCell();
+		}
+		break;
+	case('T'):
+		if (down)
+		{
+			cellInfoWindow->SplitCurrentCell();
+		}
+		break;
+	case('N'):
+		if (down)
+		{
+			render->GetWorld()->AddCell(new Cell(render, render->GetWorld(), nullptr, rand() % (render->GetWorld()->GetSizeX() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeY() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeZ() * render->GetWorld()->GetChunkSize())));
 		}
 		break;
 	}
@@ -147,7 +161,7 @@ void Input::RunTick(int t)
 	//keeping the Character move at a constant speed
 	//the character will slow down however if, for example, A, D and W are pressed at the same time but i honestly dont care, that would be their own fault
 	if ((keyW || keyS) && (keyA || keyD))
-		render->GetCamera()->AddPosition(x / 2, y, z / 2);
+		render->GetCamera()->AddPosition(x / 2, y, z / 2, true);
 	else
-		render->GetCamera()->AddPosition(x, y, z);
+		render->GetCamera()->AddPosition(x, y, z, true);
 }

@@ -24,6 +24,7 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 	accelSpeed += secondValue / 15.0f;
 
 	energyRequierement = pow(maxSpeed, 2) + pow(accelSpeed, 2);
+	surface = energyRequierement * 10;
 
 	XNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 	YNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
@@ -32,25 +33,32 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 
 float Flagellum::Tick(int t)
 {
+	float modifier = 0.0f;
+	float ATPCost = (neuralNet->GetOutputNode(XNeuralNetNode) + neuralNet->GetOutputNode(YNeuralNetNode) + neuralNet->GetOutputNode(ZNeuralNetNode)) * t * energyRequierement;
+	ATPCost = pCell->LimitATPUsage(ATPCost, surface, &modifier);
+
 	XMFLOAT3 currentVel = *pCell->GetVelocity();
 
 	float currentSpeed = sqrt(pow(currentVel.x, 2) + pow(currentVel.y, 2) + pow(currentVel.z, 2));
 
-	currentVel.x += neuralNet->GetOutputNode(XNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f);
-	currentVel.y += neuralNet->GetOutputNode(YNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f);
-	currentVel.z += neuralNet->GetOutputNode(ZNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f);
+	currentVel.x += neuralNet->GetOutputNode(XNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
+	currentVel.y += neuralNet->GetOutputNode(YNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
+	currentVel.z += neuralNet->GetOutputNode(ZNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
 
 	pCell->SetVelocity(&currentVel);
 
-	return -1.0f * (neuralNet->GetOutputNode(XNeuralNetNode) + neuralNet->GetOutputNode(YNeuralNetNode) + neuralNet->GetOutputNode(ZNeuralNetNode)) * t * energyRequierement;
+	return -1.0f * ATPCost;
 }
 
 string Flagellum::GetOutputString()
 {
 	string buffer = " Flagellum\n";
 
-	buffer += "  Max Speed: " + to_string(maxSpeed) + " \n  Accel Speed: " + to_string(accelSpeed) + " \n  Energy Requierement: " + to_string(energyRequierement);
-	buffer += "\n  Output Nodes: " + to_string(XNeuralNetNode) + " / " + to_string(YNeuralNetNode) + " / " + to_string(ZNeuralNetNode) + "\n        "
+	buffer += "  Max Speed: " + to_string(maxSpeed) + " \n"; 
+	buffer += "  Accel Speed : " + to_string(accelSpeed) + " \n";
+	buffer += "  Energy Requierement : " + to_string(energyRequierement) + "\n";
+	buffer += "  Surface : " + to_string(surface) + "\n";
+	buffer += "  Output Nodes: " + to_string(XNeuralNetNode) + " / " + to_string(YNeuralNetNode) + " / " + to_string(ZNeuralNetNode) + "\n        "
 		+ to_string(neuralNet->GetOutputNode(XNeuralNetNode)) +  " / " + to_string(neuralNet->GetOutputNode(YNeuralNetNode)) + " / " + to_string(neuralNet->GetOutputNode(ZNeuralNetNode)) + "\n";
 
 	return buffer;

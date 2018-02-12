@@ -5,9 +5,8 @@
 #include "Cell.h"
 #include "ChemicalContainer.h"
 
-#define CONTAINS_TO_ABSOLUTE_NUMBERS 1000
-
-#define CONVERSION_CONSTANT 10.0f
+#define CONVERSION_CONSTANT 2.0f
+#define CONVERSION_UPKEEP 0.001f
 
 class DNA;
 class NeuralNetwork;
@@ -18,16 +17,21 @@ class EnergyManager : public Trait
 	NeuralNetwork* neuralNet = nullptr;
 	ChemicalContainer* chemCon = nullptr;
 
-	int conversionNeuralNode = 0;
 
+	bool createdThroughDNA = false;
+
+	int conversionNeuralNode = 0;
 	float conversionCapabilities = 0;
 
 public:
 	EnergyManager(Cell* parentCell, DNA* dna, int startpos);
+	EnergyManager(Cell* parentCell);
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return pCell->GetChemCon()->GetVolume() / 100.0f; }
+	float GetATPBuildingCost() { return pCell->GetChemCon()->GetVolume() / 10 + (pCell->GetChemCon()->GetVolume() / 50) * conversionCapabilities; }
+
+	int GetType() { return Type_EnergyManager; }
 
 	~EnergyManager();
 };

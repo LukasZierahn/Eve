@@ -1,6 +1,7 @@
 #include "ChemicalContainer.h"
 #include "Membrane.h"
 #include "World.h"
+#include "Cell.h"
 
 //these are given in um/s^2
 const float ChemicalContainer::diffusionCoefficients[] = { 1.0f, 1.0f };
@@ -10,10 +11,11 @@ ChemicalContainer::ChemicalContainer(World* world, float vol, float sA, Chemical
 
 	if (splittingFrom == nullptr)
 	{
-		contains[0] = 10;
-		contains[1] = 10;
+		//contains[0] = FOOD_NORMALVALUE;
+		contains[0] = 0.0f;
+		contains[1] = 0.0f;
 
-		temperature = 20.0f;
+		//temperature = 20.0f;
 
 		for (int i = 0; i < contains_amount; i++)
 		{
@@ -22,7 +24,7 @@ ChemicalContainer::ChemicalContainer(World* world, float vol, float sA, Chemical
 	}
 	else
 	{
-		temperature = splittingFrom->temperature;
+		//temperature = splittingFrom->temperature;
 
 		float volumeRelation = 1 / volume * splittingFrom->volume;
 		for (int i = 0; i < contains_amount; i++)
@@ -36,6 +38,8 @@ ChemicalContainer::ChemicalContainer(World* world, float vol, float sA, Chemical
 
 void ChemicalContainer::DiffuseToNeighbouringChunks(float t)
 {
+	contains[POISON_CHEMCON_ID] *= 0.9;
+
 	for (short i = 0; i < amountOfNeightbouringChunks; i++)
 	{
 		DiffuseFromAndTo(surroundingChunks[i], t);
@@ -47,8 +51,8 @@ void ChemicalContainer::DiffuseFromAndTo(ChemicalContainer* target, float t)
 	float flow = world->GetChemConFlowSpeed();
 	int chunkSize = world->GetChunkSize();
 
-	target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
-	temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
+	//target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
+	//temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
 
 	for (int j = 0; j < contains_amount; j++)
 	{
@@ -64,8 +68,8 @@ void ChemicalContainer::DiffuseFromAndTo(ChemicalContainer* target, float t, flo
 	float flow = world->GetChemConFlowSpeed();
 	int chunkSize = world->GetChunkSize();
 
-	target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
-	temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
+	//target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
+	//temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
 
 	for (int j = 0; j < contains_amount; j++)
 	{
@@ -79,32 +83,34 @@ void ChemicalContainer::DiffuseFromAndTo(ChemicalContainer* target, float t, flo
 float ChemicalContainer::DiffuseFromAndTo(ChemicalContainer* target, float t, Membrane* membrane)
 {
 	float totalATPCost = 0.0f;
+	float modifier = 0.0f;
+	float movement = 0.0f;
 
 	float flow = world->GetChemConFlowSpeed();
 	int chunkSize = world->GetChunkSize();
 
-	target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
-	temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
+	//target->temperature += (t / TemperatureDiffusionCoefficient) * flow * (temperature - target->temperature);
+	//temperature += (t / TemperatureDiffusionCoefficient) * flow * (target->temperature - temperature);
 
 	for (int j = 0; j < contains_amount; j++)
 	{
 		if (membrane->GetOutputNode(j) > 0)
 		{
-			float movement = min(1, containsBuffer[j] / 3.0f) * t * membrane->GetModifierCellToChunk(j) * abs(membrane->GetOutputNode(j)) * membrane->GetSurfaceArea() / 50;
+			movement = min(1, containsBuffer[j] / 3.0f) * t * membrane->GetModifierCellToChunk(j) * abs(membrane->GetOutputNode(j)) * membrane->GetSurfaceArea() / 50;
 
-			target->containsBuffer[j] += movement;
-			containsBuffer[j] -= movement;
+			totalATPCost += membrane->GetParentCell()->LimitATPUsage(ATPCostToMoveSubstances[j] * abs(movement), surfaceArea, &modifier);
 
-			totalATPCost += ATPCostToMoveSubstances[j] * abs(movement);
+			target->containsBuffer[j] += movement * modifier;
+			containsBuffer[j] -= movement * modifier;
 		}
 		else
 		{
-			float movement = min(1, target->containsBuffer[j] / 3.0f) * t * membrane->GetModifierChunkToCell(j) * abs(membrane->GetOutputNode(j)) * membrane->GetSurfaceArea() / 50;
+			movement = min(1, target->containsBuffer[j] / 3.0f) * t * membrane->GetModifierChunkToCell(j) * abs(membrane->GetOutputNode(j)) * membrane->GetSurfaceArea() / 50;
 
-			target->containsBuffer[j] -= movement;
-			containsBuffer[j] += movement;
+			totalATPCost += membrane->GetParentCell()->LimitATPUsage(ATPCostToMoveSubstances[j] * abs(movement), surfaceArea, &modifier);
 
-			totalATPCost += ATPCostToMoveSubstances[j] * abs(movement);
+			target->containsBuffer[j] -= movement * modifier;
+			containsBuffer[j] += movement * modifier;
 		}
 	}
 
@@ -121,6 +127,14 @@ float ChemicalContainer::GetSwellAmount(ChemicalContainer* target)
 	}
 
 	return returnValue;
+}
+
+void ChemicalContainer::ContainsNormalisation(int t)
+{
+	containsBuffer[FOOD_CHEMCON_ID] -= FOOD_NORMALVALUE;
+	containsBuffer[FOOD_CHEMCON_ID] *= pow(0.97, t / 5);
+	containsBuffer[FOOD_CHEMCON_ID] += FOOD_NORMALVALUE;
+	contains[POISON_CHEMCON_ID] *= pow(0.90, t / 5);
 }
 
 

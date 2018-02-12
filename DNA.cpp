@@ -13,7 +13,7 @@ DNA::DNA(string InpDNA)
 
 void DNA::GenerateRandomDNA(int size)
 {
-	DNAString = "Me";
+	DNAString = "";
 
 	for (int i = 0; i < size; i++)
 	{
@@ -28,9 +28,11 @@ DNA* DNA::CloneDNA()
 {
 	string ClonedDNAString = "";
 
-	int changingChance = DNAString[DNAString.size() - 1];
-	int addingChance = DNAString[DNAString.size() - 2];
-	int removingChance = DNAString[DNAString.size() - 3];
+	SetCurrentPosition(DNAString.size() - 12);
+
+	int changingChance = GetGeneInt(1, 100);
+	int addingChance = GetGeneInt(1, 100);
+	int removingChance = GetGeneInt(1, 100);
 
 	for (char i : DNAString)
 	{

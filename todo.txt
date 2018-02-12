@@ -1,11 +1,10 @@
 Programming:
-	membrane, active osmosis
-	Death of a Cell
-		volume increase
-		poison to cell
-	less APT -> less activity
 
-	(collision)
+	membrane swelling
+
+	Balancing
+
+	collision
 
 Writing:
 	(Include Fat ??)

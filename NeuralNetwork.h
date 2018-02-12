@@ -7,6 +7,7 @@ class DNA;
 class NeuralNetwork
 {
 	int inputLayerCount = 0;
+	float* inputLayerConstantValue;
 	float* inputLayer;
 
 	int hiddenLayerCount = 0;
@@ -20,6 +21,7 @@ class NeuralNetwork
 
 	int hiddenToOutConCount = 0;
 	float* hiddenToOutCon;
+
 
 	int InputNodesMax = 0;
 

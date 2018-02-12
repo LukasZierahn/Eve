@@ -165,7 +165,7 @@ RenderClass::RenderClass(HWND wndhandle)
 
 void RenderClass::RenderFrame()
 {
-	float colour[4] = { 0.5f, 0.1f, 0.7f, 1.0f };
+	float colour[4] = { 0.1f, 0.1f, 0.3f + 0.4f * (cam->GetPosition()->y) / (world->GetChunkSize() * world->GetSizeY()), 0.3f + 0.4f * (cam->GetPosition()->y) / (world->GetChunkSize() * world->GetSizeY()) };
 	deviceContext->ClearRenderTargetView(backbuffer.Get(), colour);
 
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH || D3D11_CLEAR_STENCIL, 1.0f, 0);

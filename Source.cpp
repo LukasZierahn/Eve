@@ -1,4 +1,3 @@
-#include "include.h"
 #include "RenderClass.h"
 #include "Cell.h"
 #include "Model.h"
@@ -15,6 +14,7 @@ RenderClass* render = nullptr;
 InfoWindow* infoWindow = nullptr;
 CellInfoWindow* cellInfoWindow = nullptr;
 World* world = nullptr;
+
 
 LRESULT CALLBACK EveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -44,7 +44,7 @@ LRESULT CALLBACK EveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-long long milliseconds_now() 
+long long milliseconds_now()
 {
 	LARGE_INTEGER frequency;
 	BOOL use_qpc = QueryPerformanceFrequency(&frequency);
@@ -111,7 +111,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	ShowWindow(hWnd, CmdShow);
 	UpdateWindow(hWnd);	
 
-	world->AddCell(new Cell(render, world, nullptr, 50.0f, 50.0f, 50.0f));
+	//world->AddCell(new Cell(render, world, nullptr, rand() % (world->GetSizeX() * world->GetChunkSize()), rand() % (world->GetSizeY() * world->GetChunkSize()), rand() % (world->GetSizeZ() * world->GetChunkSize())));
 
 	//Initalising the Message loop
 	cellInfoWindow->SetClosestCellAsCurrentCell();
@@ -123,13 +123,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	int DeltaTime;
 
 	int counterForInfoWindowUpdates = 0;
+	int counterForLog = 0;
 	int FPS = 0;
+
+	CreateDirectory(world->GetCurrentTestRunName().c_str(), NULL);
+	CreateDirectory((world->GetCurrentTestRunName() + "\\log").c_str(), NULL);
+	CreateDirectory((world->GetCurrentTestRunName() + "\\save").c_str(), NULL);
 
 	while (true)
 	{
 		NewTime = milliseconds_now();
 		DeltaTime = NewTime - t;
 		counterForInfoWindowUpdates += DeltaTime;
+		counterForLog += DeltaTime;
 		FPS++;
 
 		if (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE))
@@ -153,10 +159,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 			FPS = 0;
 		}
 
+		if (counterForLog > 30000)
+		{
+			counterForLog = 0;
+			world->WriteLog();
+			world->WriteCurrentCellHistory();
+			world->SafeState();
+		}
+
+		if (world->GetCellVec()->size() == 0)
+		{
+			world->OpenOutputAndIncreaseTry();
+			world->Reset();
+			for (int i = 0; i < 50; i++)
+			{
+				world->AddCell(new Cell(render, world, nullptr, rand() % (world->GetSizeX() * world->GetChunkSize()), rand() % (world->GetSizeY() * world->GetChunkSize()), rand() % (world->GetSizeZ() * world->GetChunkSize())));
+			}
+
+			counterForLog = 0;
+			world->WriteLog();
+			world->WriteCurrentCellHistory();
+		}
+
 		t = NewTime;
 	}
 
-	delete render, infoWindow, cellInfoWindow, world;
 
 	return 0;
 }

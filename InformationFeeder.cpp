@@ -13,7 +13,8 @@ InformationFeeder::InformationFeeder(Cell* parentCell, DNA* dna, int startingPos
 
 	dna->SetCurrentPosition(startingPos);
 
-	temperatureInputNode = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
+	//temperatureInputNode = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
+	ATPInputNode = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
 	for (int i = 0; i < contains_amount; i++)
 	{
 		containsInputNode[i] = dna->GetGeneInt(0, neuralNet->GetInputLayerCount());
@@ -22,7 +23,8 @@ InformationFeeder::InformationFeeder(Cell* parentCell, DNA* dna, int startingPos
 
 void InformationFeeder::InputValuesToNeuralNetwork()
 {
-	neuralNet->SetInputNode(temperatureInputNode, min(chemCon->GetTemperature() / Max_Temperature, 1.0f));
+	//neuralNet->SetInputNode(temperatureInputNode, min(chemCon->GetTemperature() / Max_Temperature, 1.0f));
+	neuralNet->SetInputNode(ATPInputNode, min(pCell->GetATP() / (Max_ATP * chemCon->GetVolume()), 1.0f));
 	for (int i = 0; i < contains_amount; i++)
 	{
 		neuralNet->SetInputNode(containsInputNode[i], min(chemCon->GetContains(i) / Max_Amount_Of_Substances, 1.0f));

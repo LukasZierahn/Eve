@@ -3,9 +3,9 @@
 
 #include "include.h"
 #include "Camera.h"
+#include "Cell.h"
 
 class World;
-class Cell;
 class RenderClass;
 
 class CellInfoWindow
@@ -32,6 +32,8 @@ public:
 		else
 			cam->FollowCell(currentCell);
 	}
+
+	void SplitCurrentCell() { currentCell->ForceSplit(); }
 
 	void WriteInfoData();
 	static LRESULT CALLBACK Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

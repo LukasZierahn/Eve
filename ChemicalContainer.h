@@ -6,11 +6,13 @@
 #define contains_amount 2
 
 #define FOOD_CHEMCON_ID 0
-#define CO2_CHEMCON_ID 1
+#define POISON_CHEMCON_ID 1
+
+#define FOOD_NORMALVALUE 300.0f
 
 #define TemperatureDiffusionCoefficient 1
 
-const static string writtenSubstances[] = { "Food", "CO2" };
+const static string writtenSubstances[] = { "Food", "Poison" };
 
 const static float ATPCostToMoveSubstances[] = { 1.0f, 1.0f };
 
@@ -20,7 +22,7 @@ class Membrane;
 class ChemicalContainer
 {
 	float volume; //this is given in um
-	float temperature; //this is given in degree Celcius, so that we operate closer to the 0 and thus the float is more precises
+	//float temperature; //this is given in degree Celcius, so that we operate closer to the 0 and thus the float is more precises
 	float surfaceArea;
 
 	int amountOfNeightbouringChunks = 0;
@@ -45,12 +47,13 @@ public:
 	float DiffuseFromAndTo(ChemicalContainer* target, float t, Membrane* membrane);
 
 	float GetSwellAmount(ChemicalContainer* target);
+	void ContainsNormalisation(int t);
 
 	void ApplyContains() 
 	{ 
 		for (int i = 0; i < contains_amount; i++)
 		{
-			contains[i] = containsBuffer[i];
+			contains[i] = max(containsBuffer[i], 0);
 		}
 	};
 
@@ -63,12 +66,12 @@ public:
 	double* GetContains() { return contains; }
 	double GetContains(int pos) { return contains[pos]; }
 
-	float GetTemperature() { return temperature; }
-	void AddToTemperature(float add) { temperature += add; }
+	//float GetTemperature() { return temperature; }
+	//void AddToTemperature(float add) { temperature += add; }
 
 	float GetVolume() { return volume; }
-	void AddSubstanceToContains(int key, float add) { contains[key] += add; containsBuffer[key] = contains[key]; }
-	void SetSubstanceInContains(int key, float set) { contains[key] = set; containsBuffer[key] = contains[key]; }
+	void AddSubstanceToContains(int key, float add) { containsBuffer[key] += add; }
+	void SetSubstanceInContains(int key, float set) { containsBuffer[key] = set; }
 
 	~ChemicalContainer();
 };

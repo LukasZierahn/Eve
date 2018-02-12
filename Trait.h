@@ -11,6 +11,8 @@ public:
 	virtual float Tick(int t) = 0;
 	virtual string GetOutputString() = 0;
 
+	virtual int GetType() = 0;
+
 	virtual float GetATPBuildingCost() = 0;
 
 	~Trait();

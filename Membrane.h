@@ -5,9 +5,9 @@
 #include "Trait.h"
 #include "ChemicalContainer.h"
 #include "NeuralNetwork.h"
+#include "Cell.h"
 
 class DNA;
-class Cell;
 class World;
 
 class Membrane : public Trait //the full name for this is semipermeable membrane
@@ -24,12 +24,17 @@ class Membrane : public Trait //the full name for this is semipermeable membrane
 	float modifierArrCellToChunk[contains_amount];
 	float modifierArrChunkToCell[contains_amount];
 
+	float swellingModifier;
+	int swellingOutputNode;
+
 	//passiv Movement
 	float modifierArrPassiveMovement[contains_amount];
 public:
 	Membrane(Cell* parentCell, DNA* dna, int startingPos);
 
 	void InputValuesToNeuralNetwork() {}
+
+	Cell* GetParentCell() { return pCell; }
 
 	float GetOutputNode(int ind) { return neuralNet->GetOutputNode(outputNodeArr[ind]); }
 	float GetModifierCellToChunk(int ind) { return modifierArrCellToChunk[ind]; }
@@ -39,7 +44,9 @@ public:
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return 0.0f; }
+	float GetATPBuildingCost() { return surfaceArea; }
+
+	int GetType() { return Type_Membrane; }
 
 	~Membrane();
 };

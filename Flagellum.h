@@ -20,6 +20,7 @@ class Flagellum : public Trait
 	float volume = 0.0f;
 
 	float energyRequierement = 0.0f;
+	float surface = 0.0f;
 
 	int XNeuralNetNode = 0;
 	int YNeuralNetNode = 0;
@@ -32,7 +33,9 @@ public:
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return energyRequierement  * 100.0f; }
+	float GetATPBuildingCost() { return energyRequierement  * 10.0f; }
+
+	int GetType() { return Type_Flagellum; }
 
 	~Flagellum();
 };
