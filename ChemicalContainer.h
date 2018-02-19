@@ -8,7 +8,7 @@
 #define FOOD_CHEMCON_ID 0
 #define POISON_CHEMCON_ID 1
 
-#define FOOD_NORMALVALUE 300.0f
+#define FOOD_NORMALVALUE 350.0f
 
 #define TemperatureDiffusionCoefficient 1
 

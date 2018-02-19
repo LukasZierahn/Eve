@@ -73,6 +73,11 @@ void World::GetChunkPos(float x, float y, float z, int* outX, int* outY, int* ou
 
 void World::KeepPointInBounds(float* x, float* y, float* z)
 {
+	if (isinf(*x) || isinf(*y) || isinf(*z))
+	{
+		return;
+	}
+
 	while (*x < 0) { *x = chunkSize * (sizeX - 1) + *x; }
 	while (*y < 0) { *y = 0; }
 	while (*z < 0) { *z = chunkSize * (sizeX - 1) + *z; }
@@ -124,8 +129,10 @@ void World::OpenOutputAndIncreaseTry()
 		output = nullptr;
 	}
 	output = new ofstream();
-	output->open(currentTestRun + "\\log\\" + (currentTestRun + " - " + to_string(currentTry) + ".csv"));
-	*output << "Minutes, Seconds, Cell Alive, Maximum Cell Count, Cells Died, Cells Died by Swelling, Cells Died by Lack of ATP, Cells Died in the last 30 Seconds, Cells Died in the last 30 Seconds (Swelling), Cells Died in the last 30 Seconds (ATP), Cells Created, Cells Created in the last 30 Seconds, Average Cell Lifetime (in seconds), Cell Lifetime Standard Deviation, Average Cell Size, Cell Size Standard Deviation, Average Cell Lenght, Cell Length Standard Deviation, Flagellum Absolute, Flagellum Percent, Membrane Absolute, Membrane Percent, Energy Manager Absolute, Energy Manager percent, Splitting Manager Absolute, Splitting Manager Percent\n";
+	output->open(currentTestRun + "\\" + (currentTestRun + " - " + to_string(currentTry) + ".csv"));
+	*output << "Minutes, Seconds, Cell Alive, Maximum Cell Count, Cells Died, Cells Died by Swelling, Cells Died by Lack of ATP, Cells Died by Lack of ATP that were Splitting, Cells Died in the last 30 Seconds, Cells Died in the last 30 Seconds (Swelling), Cells Died in the last 30 Seconds (ATP), Cells Died in the last 30 Seconds (ATP & Splitting), Cells Created, Cells Created in the last 30 Seconds";
+	*output << ", Average Cell Lifetime(in seconds), Cell Lifetime Standard Deviation, Average Cell Size, Cell Size Standard Deviation, Average Cell Length, Cell Length Standard Deviation, Flagellum Absolute, Flagellum Percent, Membrane Absolute, Membrane Percent, Energy Manager Absolute, Energy Manager percent, Splitting Manager Absolute, Splitting Manager Percent";
+	*output << ", Total Food, Total Poison\n";
 	output->flush();
 }
 
@@ -133,11 +140,12 @@ void World::WriteLog()
 {
 	*output << (to_string(clock / 60000) + "," + to_string((clock / 1000) % 60));
 	*output << "," + to_string(cellVec.size()) + "," + to_string(maxCells);
-	*output << "," + to_string(cellsDied) + "," + to_string(deathBySwelling) + "," + to_string(deathByATPLack);
-	*output << "," + to_string(cellsDied - oldCellsDied) + "," + to_string(deathBySwelling - oldDeathBySwelling) + "," + to_string(deathByATPLack - oldDeathByATPLack);
+	*output << "," + to_string(cellsDied) + "," + to_string(deathBySwelling) + "," + to_string(deathByATPLack) + "," + to_string(deathByATPLackAndSplitting);
+	*output << "," + to_string(cellsDied - oldCellsDied) + "," + to_string(deathBySwelling - oldDeathBySwelling) + "," + to_string(deathByATPLack - oldDeathByATPLack) + "," + to_string(deathByATPLackAndSplitting - oldDeathByATPLackAndSplitting);
 	*output << "," + to_string(cellsCreated) + "," + to_string(cellsCreated - oldCellsCreated);
 
 	oldDeathByATPLack = deathByATPLack;
+	oldDeathByATPLackAndSplitting = deathByATPLackAndSplitting;
 	oldDeathBySwelling = deathBySwelling;
 	oldCellsDied = cellsDied;
 	oldCellsCreated = cellsCreated;
@@ -191,45 +199,35 @@ void World::WriteLog()
 	*output << "," + to_string(ene) + "," + to_string(ene * 1.0f / cellVec.size());
 	*output << "," + to_string(split) + "," + to_string(split * 1.0f / cellVec.size());
 
+	*output << "," + to_string(GetTotalContainingsFromID(FOOD_CHEMCON_ID)) + "," + to_string(GetTotalContainingsFromID(POISON_CHEMCON_ID));
+
 	*output << "\n";
 
 	output->flush();
 
-}
-
-void World::WriteCurrentCellHistory()
-{
-	ofstream output;
-	output.open(currentTestRun + "\\" + (currentTestRun + " - " + to_string(currentTry) + " History.txt"));
-
-	for (Cell* c : cellHistoryVec)
-	{
-		output << to_string(c->GetID()) + "/" + to_string(c->GetParentID()) + "/" + c->GetDNA()->GetString() + "\n";
-	}
-
-	output.flush();
-	output.close();
-}
-
-void World::SafeState()
-{
-	ofstream output;
-	output.open(currentTestRun + "\\save\\" + (currentTestRun + " - " + to_string(currentTry) + "." + to_string(currentSafe) + ".txt"));
-	currentSafe++;
-
+	//there have been single cells (approximitly 1:10.000) that have infinte amounts of ATP and thus cant die and replicate indefenitely and that grow exponentially
+	//i am not sure what causes these 'zombie' cells but sever time pressure has lead to me to this, admittetly hacky solution.
+	//the influence on the simulation itself is negletable as the amount of zombie cells is very small
 	for (Cell* c : cellVec)
 	{
-		output << to_string(c->GetID()) + "/" + to_string(c->GetPositionX()) + "/" + to_string(c->GetPositionY()) + "/" + to_string(c->GetPositionZ()) + "/";
-		output << to_string(c->GetATP()) + "/";
-		for (int i = 0; i < contains_amount; i++)
+		if (isinf(c->GetATP()))
 		{
-			output << to_string(c->GetChemCon()->GetContains(i)) + "/";
+			//bad cells get killed
+			c->SetATP(0);
 		}
-		output << to_string(c->GetSwellPercent()) + "\n";
+	}
+}
+
+float World::GetTotalContainingsFromID(int ID)
+{
+
+	float total = 0.0f;
+	for (int i = 0; i < chunkArraySize; i++)
+	{
+		total += chunkArray[i]->GetChemCon()->GetContains(ID);
 	}
 
-	output.flush();
-	output.close();
+	return total;
 }
 
 void World::Reset()
@@ -237,8 +235,10 @@ void World::Reset()
 	clock = 0;
 
 	deathByATPLack = 0;
+	deathByATPLackAndSplitting = 0;
 	deathBySwelling = 0;
 	oldDeathByATPLack = 0;
+	oldDeathByATPLackAndSplitting = 0;
 	oldDeathBySwelling = 0;
 
 	cellsDied = 0;
@@ -263,13 +263,7 @@ string World::GetInfoWindowString()
 	buffer += " Chunk Volume : " + to_string(chunkVolume) + "\n";
 	buffer += " Total Chunks: " + to_string(chunkArraySize) + "  (" + to_string(sizeX) + " / " + to_string(sizeY) + " / " + to_string(sizeZ) + ")\n";
 
-	float totalFood = 0.0f;
-	for (int i = 0; i < chunkArraySize; i++)
-	{
-		totalFood += chunkArray[i]->GetChemCon()->GetContains(FOOD_CHEMCON_ID);
-	}
-
-	buffer += " Total Food: " + to_string(totalFood) + "\n";
+	buffer += " Total Food: " + to_string(GetTotalContainingsFromID(FOOD_CHEMCON_ID)) + "\n";
 
 	buffer += " Cells Alive: " + to_string(cellVec.size()) + "/" + to_string(maxCells) + "\n";
 	buffer += " Cells Died (ATP,Swelling): " + to_string(deathByATPLack) + "/" + to_string(deathBySwelling) + "\n";

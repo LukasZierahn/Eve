@@ -44,7 +44,7 @@ public:
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return surfaceArea; }
+	float GetATPBuildingCost() { return surfaceArea / 100; }
 
 	int GetType() { return Type_Membrane; }
 

@@ -41,11 +41,6 @@ void NeuralNetwork::ComputeResult()
 		}
 		outputLayer[i] = outputLayer[i] / hiddenLayerCount;
 	}
-
-	for (int i = 0; i < inputLayerCount; i++)
-	{
-		inputLayer[i] = inputLayerConstantValue[i];
-	}
 }
 
 
@@ -64,6 +59,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	for (int i = 0; i < inputLayerCount; i++)
 	{
 		inputLayerConstantValue[i] = dna->GetGeneFloatFromSingleChar(-1, 1);
+		inputLayer[i] = inputLayerConstantValue[i];
 	}
 
 

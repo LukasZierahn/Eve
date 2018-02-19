@@ -1,7 +1,0 @@
-Minutes, Seconds, Cell Alive, Maximum Cell Count, Cells Died, Cells Died by Swelling, Cells Died by Lack of ATP, Cells Died in the last 30 Seconds, Cells Died in the last 30 Seconds (Swelling), Cells Died in the last 30 Seconds (ATP), Cells Created, Cells Created in the last 30 Seconds, Average Cell Lifetime (in seconds), Cell Lifetime Standard Deviation, Average Cell Size, Cell Size Standard Deviation, Average Cell Lenght, Cell Length Standard Deviation, Flagellum Absolute, Flagellum Percent, Membrane Absolute, Membrane Percent, Energy Manager Absolute, Energy Manager percent, Splitting Manager Absolute, Splitting Manager Percent
-0,0,50,50,0,0,0,0,0,0,0,0,0.000000,0.000000,4.990494,1.415336,5.420211,1.245783,0,0.000000,0,0.000000,14,0.280000,12,0.240000
-0,29,50,51,1,0,1,1,0,1,1,1,29.093008,0.000008,4.990494,1.415336,5.420211,1.245783,0,0.000000,0,0.000000,14,0.280000,12,0.240000
-0,59,54,54,2,0,2,1,0,1,6,5,55.641472,12.492474,4.839361,1.470003,5.391547,1.258630,0,0.000000,0,0.000000,15,0.277778,13,0.240741
-1,29,60,60,2,0,2,0,0,0,12,6,78.084206,25.691259,4.834095,1.405748,5.434839,1.294285,0,0.000000,0,0.000000,18,0.300000,13,0.216667
-1,59,72,73,3,0,3,1,0,1,25,13,93.024147,41.115299,5.010505,1.459081,5.482786,1.267457,0,0.000000,0,0.000000,20,0.277778,14,0.194444
-2,29,75,75,3,0,3,0,0,0,28,3,118.804298,45.296227,4.986105,1.468722,5.443617,1.265161,0,0.000000,0,0.000000,21,0.280000,14,0.186667

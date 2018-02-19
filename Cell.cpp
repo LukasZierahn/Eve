@@ -64,7 +64,10 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render
 	CheckDNAForTraits();
 
 	if (!hasSplitter)
-		traits.push_back(new SplittingManager(this));	
+	{
+		splitMan = new SplittingManager(this);
+		traits.push_back(splitMan);
+	}
 	
 	if (!hasEnergyManager)
 		traits.push_back(new EnergyManager(this));
@@ -109,7 +112,7 @@ void Cell::Tick(float t)
 	chemCon->ApplyContains();
 	chunk->GetChemCon()->ApplyContains();
 
-	ATP -= chunk->GetChemCon()->GetContains(POISON_CHEMCON_ID) / 2;
+	ATP -= chunk->GetChemCon()->GetContains(POISON_CHEMCON_ID) / 5;
 
 	swellPercent += chemCon->GetSwellAmount(chunk->GetChemCon()) * t / volume;
 	swellPercent += ATP_Swelling_Factor * ATP * t / volume;
@@ -160,7 +163,7 @@ void Cell::CheckDNAForTraits()
 				if (i == Type_InformationFeeder)
 				{
 					neuralInps.push_back(new InformationFeeder(this, dna, searchStart));
-					break; //only one InformationFeeder should be created since they would just override each other and otherwise all "I"'s in the DNA get clustered with new InfFeeder
+					break; //only one InformationFeeder should be created since they would just override each other and otherwise all "i"'s in the DNA get clustered with new InfFeeder
 				}
 
 				if (i == Type_EnergyManager)
@@ -172,8 +175,8 @@ void Cell::CheckDNAForTraits()
 
 				if (i == Type_SplittingManager)
 				{
-					SplittingManager* SM = new SplittingManager(this, dna, searchStart);
-					traits.push_back(SM);
+					splitMan = new SplittingManager(this, dna, searchStart);
+					traits.push_back(splitMan);
 					hasSplitter = true;
 					break;
 				}
@@ -239,7 +242,7 @@ void Cell::Die(bool explode)
 {
 	if (ATP <= 0)
 	{
-		world->IncreaseDeathByATPLack();
+		world->IncreaseDeathByATPLack(splitMan->IsSplitting());
 	}
 	else
 	{
@@ -252,9 +255,9 @@ void Cell::Die(bool explode)
 	}
 
 	if (explode)
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 50000); //poison
+		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume * 2 / 50000); //poison
 	else
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 100000);
+		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume * 2 / 100000);
 
 
 	isAlive = false;

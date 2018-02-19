@@ -6,7 +6,7 @@
 #include "ChemicalContainer.h"
 
 #define CONVERSION_CONSTANT 2.0f
-#define CONVERSION_UPKEEP 0.001f
+#define CONVERSION_UPKEEP 0.0005f
 
 class DNA;
 class NeuralNetwork;

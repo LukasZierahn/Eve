@@ -8,7 +8,7 @@ class Cell;
 class NeuralNetwork;
 class DNA;
 
-#define Building_Coeffiecent 0.05f
+#define Building_Coeffiecent 0.1f
 
 class SplittingManager : public Trait, public NeuralNetworkInput
 {
@@ -22,7 +22,7 @@ class SplittingManager : public Trait, public NeuralNetworkInput
 	float totalCost = 0.0f;
 	float surface = 0.0f;
 
-	int randomSpawnChance = 120000;
+	int randomSpawnChance = 300000;
 
 	Cell* splittingCell = nullptr;
 	int buildingOutputNode = 0;
@@ -43,6 +43,7 @@ public:
 	float GetATPBuildingCost() { return 100.0f; }
 
 	void StartSplitting() { forceSplit = true; }
+	bool IsSplitting() { return splittingCell == nullptr; }
 
 	~SplittingManager();
 };

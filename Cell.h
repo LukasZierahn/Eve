@@ -12,6 +12,7 @@ class Chunk;
 class DNA;
 class NeuralNetwork;
 class NeuralNetworkInput;
+class SplittingManager;
 
 #define Type_Flagellum 0
 #define Type_Membrane 1
@@ -21,7 +22,7 @@ class NeuralNetworkInput;
 
 #define Type_Absolute_Amount 5
 
-#define ATP_Swelling_Factor 0.00000001f
+#define ATP_Swelling_Factor 0.0000001f
 
 #define BuildingCost_Factor 2.5f
 #define BuildingCost_DNA_Factor 1.175f
@@ -68,6 +69,8 @@ private:
 	vector<NeuralNetworkInput*> neuralInps;
 	vector<Trait*> traits;
 
+	SplittingManager* splitMan = nullptr;
+
 	const static string dnaCriteria[];
 
 public:
@@ -84,6 +87,7 @@ public:
 	bool BuildCell(float buildAmount) { buildingCost -= buildAmount; return buildingCost <= 0; }
 	float GetBuildingCost() { return buildingCost; }
 	float GetATP() { return ATP; }
+	void SetATP(float a) { ATP = a; }
 	float LimitATPUsage(__in float projectedATPUsage, __in float Surface, __out float* modifier);
 	float LimitATPUsage(__in float projectedATPUsage, __in float Surface);
 	float GetSurfaceArea() { return surfaceArea; }

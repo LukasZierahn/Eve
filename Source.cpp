@@ -127,8 +127,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 	int FPS = 0;
 
 	CreateDirectory(world->GetCurrentTestRunName().c_str(), NULL);
-	CreateDirectory((world->GetCurrentTestRunName() + "\\log").c_str(), NULL);
-	CreateDirectory((world->GetCurrentTestRunName() + "\\save").c_str(), NULL);
 
 	while (true)
 	{
@@ -163,8 +161,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 		{
 			counterForLog = 0;
 			world->WriteLog();
-			world->WriteCurrentCellHistory();
-			world->SafeState();
 		}
 
 		if (world->GetCellVec()->size() == 0)
@@ -178,7 +174,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR CMDLine, 
 
 			counterForLog = 0;
 			world->WriteLog();
-			world->WriteCurrentCellHistory();
 		}
 
 		t = NewTime;

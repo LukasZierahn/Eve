@@ -29,8 +29,10 @@ private:
 	int deathBySwelling = 0;
 	int oldDeathBySwelling = 0;
 	int deathByATPLack = 0;
+	int deathByATPLackAndSplitting = 0;
 	int oldDeathByATPLack = 0;
-	string currentTestRun = "Darwin I";
+	int oldDeathByATPLackAndSplitting = 0;
+	string currentTestRun = "Poison 2 I";
 	ofstream* output = nullptr;
 
 	float chemConFlowSpeed = 1;
@@ -86,14 +88,20 @@ public:
 	bool CheckIfModelsIntersect(Model* mod1, Model* mod2);
 
 	void IncreaseCellsCreated() { cellsCreated++; }
-	void IncreaseDeathByATPLack() { deathByATPLack++; }
+	void IncreaseDeathByATPLack(bool splitting) 
+	{ 
+		deathByATPLack++;
+		if (splitting)
+		{
+			deathByATPLackAndSplitting++;
+		}
+	}
 	void IncreaseDeathBySwelling() { deathBySwelling++; }
 
 	void OpenOutputAndIncreaseTry();
 	void WriteLog();
 
-	void WriteCurrentCellHistory();
-	void SafeState();
+	float GetTotalContainingsFromID(int ID);
 
 	string GetCurrentTestRunName() { return currentTestRun; }
 

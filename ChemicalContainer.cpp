@@ -134,7 +134,7 @@ void ChemicalContainer::ContainsNormalisation(int t)
 	containsBuffer[FOOD_CHEMCON_ID] -= FOOD_NORMALVALUE;
 	containsBuffer[FOOD_CHEMCON_ID] *= pow(0.97, t / 5);
 	containsBuffer[FOOD_CHEMCON_ID] += FOOD_NORMALVALUE;
-	contains[POISON_CHEMCON_ID] *= pow(0.90, t / 5);
+	containsBuffer[POISON_CHEMCON_ID] *= pow(0.90, t / 5);
 }
 
 
