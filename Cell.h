@@ -24,7 +24,7 @@ class SplittingManager;
 
 #define ATP_Swelling_Factor 0.0000001f
 
-#define BuildingCost_Factor 2.5f
+#define BuildingCost_Factor 2.5f * 0.5f //#change
 #define BuildingCost_DNA_Factor 1.175f
 
 class Cell
@@ -41,6 +41,7 @@ private:
 	NeuralNetwork* neuralNet = nullptr;
 
 	bool isAlive = true;
+	bool isSelected = false;
 
 	float volume;
 	float surfaceArea;
@@ -82,6 +83,7 @@ public:
 
 	unsigned long GetID() { return ID; }
 	unsigned long GetParentID() { return parentID; }
+	void SetSelected(bool sel);
 
 	World* GetWorld() { return world; }
 	bool BuildCell(float buildAmount) { buildingCost -= buildAmount; return buildingCost <= 0; }

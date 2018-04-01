@@ -45,16 +45,28 @@ void Model::Draw()
 		XMStoreFloat4x4(&modBufHeader.rotation, XMMatrixRotationRollPitchYaw(roll, pitch, yawn));
 		modBufHeader.scale = scale;
 
+		if (render->GetCellDisplayMode() == 0) //0 is the normal texture mode, so we zero the dnaInducedColour
+		{
+			modBufHeader.dnaInducedColour = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+			tex->SetTextureAsShaderRessource();
+		}
+		else
+		{
+			modBufHeader.dnaInducedColour = DNAColour;
+			filterTex->SetTextureAsShaderRessource();
+		}
+
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		ZeroMemory(&MappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 		deviceContext->Map(modBuf.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 
-		memcpy(MappedResource.pData, &modBufHeader, sizeof(modBufHeader));
+		memcpy(MappedResource.pData, &modBufHeader, sizeof(ModelBuffer));
 
 		deviceContext->Unmap(modBuf.Get(), 0);
 
 		deviceContext->VSSetConstantBuffers(1, 1, modBuf.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(1, 1, modBuf.GetAddressOf());
 
 		//drawing stuff
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -67,8 +79,6 @@ void Model::Draw()
 		deviceContext->IASetIndexBuffer(data->indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 		deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
-
-		tex->SetTextureAsShaderRessource();
 
 		deviceContext->DrawIndexed(data->indexCount, 0, 0);
 	}

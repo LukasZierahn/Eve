@@ -23,8 +23,8 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 	maxSpeed += secondValue / 50.0f;
 	accelSpeed += secondValue / 15.0f;
 
-	energyRequierement = pow(maxSpeed, 2) + pow(accelSpeed, 2);
-	surface = energyRequierement * 10;
+	energyRequierement = pow(maxSpeed + 1, 2) + pow(accelSpeed + 1, 2) - 2;
+	surface = energyRequierement * 200;
 
 	XNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 	YNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
@@ -33,8 +33,8 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 
 float Flagellum::Tick(int t)
 {
-	float modifier = 0.0f;
-	float ATPCost = (neuralNet->GetOutputNode(XNeuralNetNode) + neuralNet->GetOutputNode(YNeuralNetNode) + neuralNet->GetOutputNode(ZNeuralNetNode)) * t * energyRequierement;
+	float modifier = 1.0f;
+	float ATPCost = (abs(neuralNet->GetOutputNode(XNeuralNetNode)) + abs(neuralNet->GetOutputNode(YNeuralNetNode)) + abs(neuralNet->GetOutputNode(ZNeuralNetNode))) * t * energyRequierement;
 	ATPCost = pCell->LimitATPUsage(ATPCost, surface, &modifier);
 
 	XMFLOAT3 currentVel = *pCell->GetVelocity();

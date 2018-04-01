@@ -17,7 +17,6 @@ class InformationFeeder : public NeuralNetworkInput //this feeds the neural net 
 {
 	Cell* pCell = nullptr;
 	NeuralNetwork* neuralNet = nullptr;
-	ChemicalContainer* chemCon = nullptr;
 
 	//int temperatureInputNode = 0;
 	int ATPInputNode = 0;

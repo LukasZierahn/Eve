@@ -57,11 +57,16 @@ CellInfoWindow::CellInfoWindow(HINSTANCE hIns, World* w, RenderClass* render)
 
 void CellInfoWindow::SetClosestCellAsCurrentCell()
 {
-	//yes technicly speaking the real distance is the root of d
+	//yes the real distance is the root of d but since we are just comparing this is equivalent to comparing the real distance
 	float d = -1;
 	float cd = 0;
 
 	XMFLOAT4* camPos = cam->GetPosition();
+
+	if (currentCell)
+	{
+		currentCell->SetSelected(false);
+	}
 
 	for (Cell* c : *world->GetCellVec())
 	{
@@ -71,6 +76,11 @@ void CellInfoWindow::SetClosestCellAsCurrentCell()
 			d = cd;
 			currentCell = c;
 		}
+	}
+
+	if (currentCell)
+	{
+		currentCell->SetSelected(true);
 	}
 }
 

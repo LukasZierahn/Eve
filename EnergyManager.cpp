@@ -1,5 +1,6 @@
 #include "EnergyManager.h"
 #include "Cell.h"
+#include "Model.h"
 #include "DNA.h"
 #include "NeuralNetwork.h"
 #include "ChemicalContainer.h"
@@ -15,6 +16,8 @@ EnergyManager::EnergyManager(Cell* parentCell, DNA* dna, int startpos)
 
 	conversionNeuralNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 	conversionCapabilities = dna->GetGeneFloat(0, 1);
+
+	pCell->GetModel()->AddToDNAColourY(conversionCapabilities);
 
 	createdThroughDNA = true;
 }

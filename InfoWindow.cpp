@@ -3,6 +3,7 @@
 #include "world.h"
 #include "Camera.h"
 #include "RenderClass.h"
+#include "Input.h"
 
 InfoWindow::InfoWindow(HINSTANCE hIns, World* w)
 {
@@ -57,6 +58,7 @@ void InfoWindow::WriteInfoData(int FPS)
 
 	XMFLOAT4* camPos = cam->GetPosition();
 	buffer += "\n x/y/z: " + to_string(camPos->x) + "/" + to_string(camPos->y) + "/" + to_string(camPos->z) + " \n";
+	buffer += " Interfernce Mode: " + to_string(world->GetRenderClass()->GetInput()->GetInterferenceMode()) + " \n";
 	buffer += " Fps: " + to_string(FPS) + " \n";
 
 	SetWindowText(textLabel, TEXT(buffer.c_str()));

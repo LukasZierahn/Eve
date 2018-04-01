@@ -9,6 +9,8 @@ class Camera;
 class Input;
 class World;
 
+#define Amount_of_Cell_Display_Modes 2
+
 class RenderClass
 {
 public:
@@ -35,6 +37,13 @@ public:
 	World* GetWorld() { return world; }
 
 	void SetFillMode(D3D11_FILL_MODE);
+
+	void CycleCellDisplayMode()
+	{
+		cellDisplayMode = (cellDisplayMode + 1) % Amount_of_Cell_Display_Modes;
+	}
+
+	short GetCellDisplayMode() { return cellDisplayMode; }
 
 	~RenderClass();
 
@@ -63,6 +72,8 @@ private:
 	Camera* cam = nullptr;
 	Input* inp = nullptr;
 	ModelLoader* modLoad = nullptr;
+
+	short cellDisplayMode = 0; //0 is normal Cell texture mode, 1 is Dna mode
 
 	World* world = nullptr;
 };

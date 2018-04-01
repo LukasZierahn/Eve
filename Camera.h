@@ -30,7 +30,7 @@ private:
 	float rX, rZ;
 
 	Cell* currentCell = nullptr;
-	float eyePositionToCellScaling = 10.0f;
+	float eyePositionToCellScaling = 25.0f;
 
 	XMFLOAT4X4 view;
 	XMFLOAT4X4 projection;

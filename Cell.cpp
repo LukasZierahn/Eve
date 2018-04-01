@@ -57,9 +57,12 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render
 
 	rndCls->GetModelLoader()->GetModel("Sphere", mod->GetDataPointer());
 	rndCls->GetModelLoader()->GetTexture("Cell", mod->GetTexturePointer());
+	rndCls->GetModelLoader()->GetTexture("CellFilter", mod->GetFilterTexturePointer());
 
 	neuralNet = new NeuralNetwork();
 	neuralNet->BuildFromDNA(dna, 11);
+
+	mod->AddToDNAColourX((neuralNet->GetInputLayerCount() + neuralNet->GetHiddenLayerCount() + neuralNet->GetOutputLayerCount()) / 45.0f);
 
 	CheckDNAForTraits();
 
@@ -128,8 +131,8 @@ void Cell::Tick(float t)
 	
 	float velocityLength = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2) + pow(velocity.z, 2));
 
-	if (velocityLength != 0)
-		mod->SetRotation(0, asin((velocity.x / velocityLength)) + XM_PI, asin(velocity.y/ velocityLength));
+	if (velocityLength >= 0.001)
+		mod->SetRotation(0, asin((velocity.x / velocityLength)) + XM_PI, asin(velocity.y / velocityLength));
 
 	mod->AddPosition(velocity.x, velocity.y, velocity.z);
 	mod->SetScale(swellPercent * (size + length), size * swellPercent, size * swellPercent);
@@ -139,7 +142,6 @@ void Cell::CheckDNAForTraits()
 {
 	for (int i = 0; i < Type_Absolute_Amount; i++)
 	{
-
 		int searchStart = 0;
 		while (searchStart != string::npos)
 		{
@@ -182,6 +184,19 @@ void Cell::CheckDNAForTraits()
 				}
 			}
 		}
+	}
+}
+
+void Cell::SetSelected(bool sel)
+{
+	isSelected = sel;
+	if (isSelected)
+	{
+		render->GetModelLoader()->GetTexture("CellSelected", mod->GetTexturePointer());
+	}
+	else
+	{
+		render->GetModelLoader()->GetTexture("Cell", mod->GetTexturePointer());
 	}
 }
 
@@ -255,9 +270,9 @@ void Cell::Die(bool explode)
 	}
 
 	if (explode)
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume * 2 / 50000); //poison
+		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 50000); //poison
 	else
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume * 2 / 100000);
+		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 100000);
 
 
 	isAlive = false;

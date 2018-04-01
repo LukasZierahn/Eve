@@ -1,1 +1,8 @@
-﻿  Eve.vcxproj -> C:\Users\Yaso\Documents\Visual Studio 2017\Projects\Eve\Debug\Eve.exe
+﻿  Camera.cpp
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\cell.h(96): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.h(20): warning C4244: 'initializing': conversion from 'float' to 'unsigned long', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.h(57): warning C4018: '>': signed/unsigned mismatch
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\world.h(74): warning C4018: '<': signed/unsigned mismatch
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\camera.cpp(19): warning C4244: '=': conversion from 'LONG' to 'FLOAT', possible loss of data
+c:\users\yaso\documents\visual studio 2017\projects\eve\eve\camera.cpp(20): warning C4244: '=': conversion from 'LONG' to 'FLOAT', possible loss of data
+  Eve.vcxproj -> C:\Users\Yaso\Documents\Visual Studio 2017\Projects\Eve\Debug\Eve.exe

@@ -14,9 +14,10 @@ SplittingManager::SplittingManager(Cell* parentCell, DNA* dna, int startpos)
 	surface = pCell->GetSurfaceArea() / 10.0f;
 
 	buildingOutputNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
-	buildingOutputNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 
 	randomSpawnChance = dna->GetGeneInt(10.000, 1000000);
+
+	pCell->GetModel()->AddToDNAColourZ(randomSpawnChance / 1000000);
 
 	createdThroughDNA = true;
 }

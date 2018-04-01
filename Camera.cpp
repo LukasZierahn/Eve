@@ -39,7 +39,7 @@ Camera::Camera(RenderClass* rend, RECT si)
 
 	XMStoreFloat4x4(&view, XMMatrixLookAtLH(XMLoadFloat4(&eyePos), XMLoadFloat4(&focusPos), XMLoadFloat4(&upDir)));
 
-	XMStoreFloat4x4(&projection, XMMatrixPerspectiveFovLH(XM_PIDIV4, size.right / (FLOAT)size.bottom, 0.001f, 200.0f));
+	XMStoreFloat4x4(&projection, XMMatrixPerspectiveFovLH(XM_PIDIV4, size.right / (FLOAT)size.bottom, 0.001f, 500.0f));
 
 	deviceContext->VSSetConstantBuffers(0, 1, constBuffer.GetAddressOf());
 

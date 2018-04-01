@@ -11,6 +11,7 @@ cbuffer ModelBuffer : register(b1)
 	matrix scale;
 	matrix position;
 	matrix rotation;
+	float4 dnaInducedColour;
 }
 
 struct VertexInputType
@@ -52,6 +53,20 @@ float4 PS(float4 position : SV_position, float2 tex : TEXPOS) : SV_TARGET
 	float4 textureColour;
 
 	textureColour = shaderTexture.Sample(sampleType, tex);
+	textureColour += dnaInducedColour;
+
+	if (textureColour.x > 1)
+	{
+		textureColour.x -= 1;
+	}
+	if (textureColour.y > 1)
+	{
+		textureColour.y -= 1;
+	}
+	if (textureColour.z > 1)
+	{
+		textureColour.z -= 1;
+	}
 
 	return textureColour;
 }

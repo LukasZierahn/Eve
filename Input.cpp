@@ -69,16 +69,28 @@ void Input::Key(bool down, WPARAM mes)
 			cellInfoWindow->SwitchFollowingCurrentCell();
 		}
 		break;
-	case('T'):
+	case('I'):
 		if (down)
+		{
+			interferenceMode = !interferenceMode;
+		}
+		break;
+	case('T'):
+		if (down && interferenceMode)
 		{
 			cellInfoWindow->SplitCurrentCell();
 		}
 		break;
 	case('N'):
-		if (down)
+		if (down && interferenceMode)
 		{
 			render->GetWorld()->AddCell(new Cell(render, render->GetWorld(), nullptr, rand() % (render->GetWorld()->GetSizeX() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeY() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeZ() * render->GetWorld()->GetChunkSize())));
+		}
+		break;
+	case('M'):
+		if (down)
+		{
+			render->CycleCellDisplayMode();
 		}
 		break;
 	}

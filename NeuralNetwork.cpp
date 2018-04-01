@@ -25,6 +25,7 @@ void NeuralNetwork::ComputeResult()
 	for (int i = 0; i < hiddenLayerCount; i++)
 	{
 		hiddenLayer[i] = 0.0f;
+
 		for (int j = 0; j < inputLayerCount; j++)
 		{
 			hiddenLayer[i] += inpToHiddenCon[j + i * inputLayerCount] * inputLayer[j];

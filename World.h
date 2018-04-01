@@ -32,7 +32,7 @@ private:
 	int deathByATPLackAndSplitting = 0;
 	int oldDeathByATPLack = 0;
 	int oldDeathByATPLackAndSplitting = 0;
-	string currentTestRun = "Poison 2 I";
+	string currentTestRun = "Building Cost 0.5 III";
 	ofstream* output = nullptr;
 
 	float chemConFlowSpeed = 1;

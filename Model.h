@@ -33,11 +33,22 @@ public:
 
 	void SetData(ModelData* d) { data = d; };
 	ModelData** GetDataPointer() { return &data; };
+
 	void SetTexture(Texture* t) { tex = t; };
 	Texture** GetTexturePointer() { return &tex; };
+	void SetFilterTexture(Texture* t) { filterTex = t; };
+	Texture** GetFilterTexturePointer() { return &filterTex; };
 
 	XMFLOAT4* GetPosition() { return &position; }
 	XMFLOAT4 GetBoundingBox(); //this an XMFloat4, Add and Subtract each Value to the corresponding value from the current model positiong to get a two points for the bounding box
+
+	XMFLOAT4* GetDNAColour() { return &DNAColour; }
+
+	void AddToDNAColourX(float add) { DNAColour.x += add; }
+	void AddToDNAColourY(float add) { DNAColour.y += add; }
+	void AddToDNAColourZ(float add) { DNAColour.z += add; }
+
+	void SetDNAColour(XMFLOAT4 newCol) { DNAColour = newCol; }
 
 	void Draw();
 
@@ -53,6 +64,8 @@ private:
 	ModelData* data = nullptr;
 
 	Texture* tex = nullptr;
+	Texture* filterTex = nullptr;
+	XMFLOAT4 DNAColour = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	ModelBuffer modBufHeader;
 

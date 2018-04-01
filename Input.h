@@ -32,6 +32,8 @@ private:
 	float x, y, z;
 	float rX, rZ;
 
+	bool interferenceMode = false;
+
 public:
 	Input(RenderClass*, RECT);
 	void Key(bool, WPARAM);
@@ -40,6 +42,8 @@ public:
 	void SetCellInfoWindow(CellInfoWindow* CIW) { cellInfoWindow = CIW; }
 
 	void RunTick(int t);
+
+	bool GetInterferenceMode() { return interferenceMode; }
 };
 
 #endif
