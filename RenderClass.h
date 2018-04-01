@@ -9,7 +9,7 @@ class Camera;
 class Input;
 class World;
 
-#define Amount_of_Cell_Display_Modes 2
+#define Amount_of_Cell_Display_Modes 3
 
 class RenderClass
 {

@@ -47,7 +47,7 @@ struct  ModelBuffer
 	XMFLOAT4X4 scale;
 	XMFLOAT4X4 position;
 	XMFLOAT4X4 rotation;
-	XMFLOAT4 dnaInducedColour; //this is needed so that cells look relative to their dna
+	XMFLOAT4 filterColour; //this is needed so that cells look relative to their dna
 };
 
 struct ModelData

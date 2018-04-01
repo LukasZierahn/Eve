@@ -24,7 +24,7 @@ class SplittingManager;
 
 #define ATP_Swelling_Factor 0.0000001f
 
-#define BuildingCost_Factor 2.5f * 0.5f //#change
+#define BuildingCost_Factor 2.5f
 #define BuildingCost_DNA_Factor 1.175f
 
 class Cell
@@ -66,6 +66,7 @@ private:
 	float buildingCost = 0;
 
 	XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT4 DNAColour = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	vector<NeuralNetworkInput*> neuralInps;
 	vector<Trait*> traits;
@@ -129,6 +130,10 @@ public:
 	Chunk* GetCurrentChunk() { return chunk; }
 
 	NeuralNetwork* GetNeuralNetwork() { return neuralNet; }
+
+	void AddToDNAColourX(float add) { DNAColour.x += add; }
+	void AddToDNAColourY(float add) { DNAColour.y += add; }
+	void AddToDNAColourZ(float add) { DNAColour.z += add; }
 
 	void ReleaseCell(Cell* pCell);
 	void Die(bool explode = false);

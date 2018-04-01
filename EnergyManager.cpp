@@ -17,7 +17,7 @@ EnergyManager::EnergyManager(Cell* parentCell, DNA* dna, int startpos)
 	conversionNeuralNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 	conversionCapabilities = dna->GetGeneFloat(0, 1);
 
-	pCell->GetModel()->AddToDNAColourY(conversionCapabilities);
+	pCell->AddToDNAColourY(conversionCapabilities);
 
 	createdThroughDNA = true;
 }

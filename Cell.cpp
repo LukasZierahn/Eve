@@ -62,7 +62,7 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render
 	neuralNet = new NeuralNetwork();
 	neuralNet->BuildFromDNA(dna, 11);
 
-	mod->AddToDNAColourX((neuralNet->GetInputLayerCount() + neuralNet->GetHiddenLayerCount() + neuralNet->GetOutputLayerCount()) / 45.0f);
+	AddToDNAColourX((neuralNet->GetInputLayerCount() + neuralNet->GetHiddenLayerCount() + neuralNet->GetOutputLayerCount()) / 45.0f);
 
 	CheckDNAForTraits();
 
@@ -93,6 +93,11 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* dna, float x, float y, float 
 void Cell::Tick(float t)
 {
 	timeAlive += t;
+
+	if (isinf(ATP) || isnan(ATP) || isinf(swellPercent) || isnan(swellPercent))
+	{
+		OutputDebugString("oh no!");
+	}
 
 	XMFLOAT4 pos = *mod->GetPosition();
 	chunk = world->GetChunk(floor(pos.x / chunkSize), floor(max(pos.y / chunkSize, 49)), floor(pos.z / chunkSize));
@@ -136,6 +141,17 @@ void Cell::Tick(float t)
 
 	mod->AddPosition(velocity.x, velocity.y, velocity.z);
 	mod->SetScale(swellPercent * (size + length), size * swellPercent, size * swellPercent);
+
+	switch (render->GetCellDisplayMode())
+	{
+	case (1): //1 is the dnaInducedColourMode
+		mod->SetFilterColour(DNAColour);
+		break;
+
+	case (2): //2 is the healthiness filter mode
+		mod->SetFilterColour(XMFLOAT4(-(swellPercent - 1) / 0.25, 0.0f, min(ATP / 3000.0f, 1.0f), 0.0f));
+		break;
+	}
 }
 
 void Cell::CheckDNAForTraits()

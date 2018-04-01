@@ -45,14 +45,14 @@ void Model::Draw()
 		XMStoreFloat4x4(&modBufHeader.rotation, XMMatrixRotationRollPitchYaw(roll, pitch, yawn));
 		modBufHeader.scale = scale;
 
-		if (render->GetCellDisplayMode() == 0) //0 is the normal texture mode, so we zero the dnaInducedColour
+		if (render->GetCellDisplayMode() == 0) //0 is the normal texture mode, so we zero the filtercolour
 		{
-			modBufHeader.dnaInducedColour = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+			modBufHeader.filterColour = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 			tex->SetTextureAsShaderRessource();
 		}
 		else
 		{
-			modBufHeader.dnaInducedColour = DNAColour;
+			modBufHeader.filterColour = filterColour;
 			filterTex->SetTextureAsShaderRessource();
 		}
 

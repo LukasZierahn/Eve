@@ -17,7 +17,7 @@ SplittingManager::SplittingManager(Cell* parentCell, DNA* dna, int startpos)
 
 	randomSpawnChance = dna->GetGeneInt(10.000, 1000000);
 
-	pCell->GetModel()->AddToDNAColourZ(randomSpawnChance / 1000000);
+	pCell->AddToDNAColourZ(randomSpawnChance / 1000000);
 
 	createdThroughDNA = true;
 }
