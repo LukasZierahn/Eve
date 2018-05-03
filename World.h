@@ -3,8 +3,29 @@
 
 #include "include.h"
 #include "Cell.h"
+#include "ChemicalContainer.h"
 
-#define DriftingSpeed 0.0001f
+#define DriftingSpeed 0.00005f
+
+struct CellInformation
+{
+	int traitCount[Type_Absolute_Amount];
+
+	float membranePassive[contains_amount];
+
+	float membraneAktiveChunkToCell[contains_amount];
+	float membraneAktiveCellToChunk[contains_amount];
+
+	int neuralNetworkNodes[3];
+	int neuralNetworkSources[Neural_InpNode_Total_Sources];
+
+	float energyManagerCC = 0.0f;
+	float energyManagerOxygenCC = 0.0f;
+	int splittingManagerPotenz = 0.0f;
+
+};
+
+const static string traitNames[Type_Absolute_Amount] = { "Flagellum", "Membran", "Information Feeder", "Energy Manager", "Splitting Manager", "Oxygen Energy Manager" };
 
 class Chunk;
 class Model;
@@ -32,7 +53,8 @@ private:
 	int deathByATPLackAndSplitting = 0;
 	int oldDeathByATPLack = 0;
 	int oldDeathByATPLackAndSplitting = 0;
-	string currentTestRun = "Building Cost 0.5 III";
+	int faultyCells = 0;
+	string currentTestRun = "Normal I";
 	ofstream* output = nullptr;
 
 	float chemConFlowSpeed = 1;
@@ -48,13 +70,12 @@ private:
 	int chunkDiffusionArraySize;
 
 	vector<Cell*> cellVec;
-	vector<Cell*> cellHistoryVec;
 
 public:
 	World(RenderClass* rndCls, int cSize, int s) : World(rndCls, cSize, s, s, s) {};
 	World(RenderClass* rndCls, int cSize, int sX, int sY, int sZ);
 
-	void AddCell(Cell* c) { cellVec.push_back(c); cellHistoryVec.push_back(c); cellVec.shrink_to_fit(); maxCells = max(maxCells, cellVec.size()); };
+	void AddCell(Cell* c) { cellVec.push_back(c); cellVec.shrink_to_fit(); maxCells = max(maxCells, cellVec.size()); };
 	unsigned long GetNextID() { return IDPosition++; }
 
 	Chunk* GetChunk(int x, int y, int z);
@@ -67,7 +88,7 @@ public:
 	int GetSizeY() { return sizeY; };
 	int GetSizeZ() { return sizeZ; };
 
-	vector<Cell*>* GetCellVec() { return &cellVec; }
+	vector<Cell*>* GetCellVec() { cellVec.shrink_to_fit(); return &cellVec; }
 	Cell* GetCell(int ind) { return cellVec[ind]; }
 	void RemoveCell(unsigned long id)
 	{
@@ -97,6 +118,7 @@ public:
 		}
 	}
 	void IncreaseDeathBySwelling() { deathBySwelling++; }
+	void IncreaseFaultyCells() { faultyCells++; }
 
 	void OpenOutputAndIncreaseTry();
 	void WriteLog();

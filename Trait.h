@@ -11,6 +11,8 @@ public:
 	virtual float Tick(int t) = 0;
 	virtual string GetOutputString() = 0;
 
+	bool GetDNAInduced() { return true; }
+
 	virtual int GetType() = 0;
 
 	virtual float GetATPBuildingCost() = 0;

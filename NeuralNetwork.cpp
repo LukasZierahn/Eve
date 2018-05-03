@@ -20,7 +20,7 @@ void NeuralNetwork::SetInputNodes(float* arr, int paramCount, bool compute)
 	}
 }
 
-void NeuralNetwork::ComputeResult()
+float NeuralNetwork::ComputeResult()
 {
 	for (int i = 0; i < hiddenLayerCount; i++)
 	{
@@ -30,7 +30,7 @@ void NeuralNetwork::ComputeResult()
 		{
 			hiddenLayer[i] += inpToHiddenCon[j + i * inputLayerCount] * inputLayer[j];
 		}
-		hiddenLayer[i] = hiddenLayer[i] / inputLayerCount;
+		hiddenLayer[i] = hiddenLayer[i] / (1.0f * inputLayerCount);
 	}
 
 	for (int i = 0; i < outputLayerCount; i++)
@@ -40,8 +40,10 @@ void NeuralNetwork::ComputeResult()
 		{
 			outputLayer[i] += hiddenToOutCon[j + i * hiddenLayerCount] * hiddenLayer[j];
 		}
-		outputLayer[i] = outputLayer[i] / hiddenLayerCount;
+		outputLayer[i] = outputLayer[i] / (1.0f * hiddenLayerCount);
 	}
+
+	return ATP_Cost_Factor_NN * (inpToHiddenConCount + hiddenToOutConCount);
 }
 
 
@@ -49,7 +51,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 {
 	dna->SetCurrentPosition(startpos);
 
-	inputLayerCount = dna->GetGeneInt(1, 6);
+	inputLayerCount = dna->GetGeneInt(1, Max_Input_Nodes);
 	inputLayer = new float[inputLayerCount];
 	for (int i = 0; i < inputLayerCount; i++)
 	{
@@ -57,14 +59,16 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	}
 
 	inputLayerConstantValue = new float[inputLayerCount];
+	inputLayerInputSource = new int[inputLayerCount];
 	for (int i = 0; i < inputLayerCount; i++)
 	{
 		inputLayerConstantValue[i] = dna->GetGeneFloatFromSingleChar(-1, 1);
 		inputLayer[i] = inputLayerConstantValue[i];
+		inputLayerInputSource[i] = -1;
 	}
 
 
-	outputLayerCount = dna->GetGeneInt(1, 10);
+	outputLayerCount = dna->GetGeneInt(1, Max_Ouput_Nodes);
 	outputLayer = new float[outputLayerCount];
 	for (int i = 0; i < outputLayerCount; i++)
 	{
@@ -72,7 +76,7 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	}
 
 
-	hiddenLayerCount = dna->GetGeneInt(1, 15);
+	hiddenLayerCount = dna->GetGeneInt(1, Max_Hidden_Nodes);
 	hiddenLayer = new float[hiddenLayerCount];
 	for (int i = 0; i < hiddenLayerCount; i++)
 	{
@@ -96,9 +100,21 @@ void NeuralNetwork::BuildFromDNA(DNA* dna, int startpos)
 	}
 }
 
+void NeuralNetwork::AddSourcesToCellInformation(CellInformation* cellInfo)
+{
+	for (int i = 0; i < inputLayerCount; i++)
+	{
+		if (inputLayerInputSource[i] != -1)
+		{
+			cellInfo->neuralNetworkSources[inputLayerInputSource[i]]++;
+		}
+	}
+}
+
 NeuralNetwork::~NeuralNetwork()
 {
 	delete[] inputLayer, hiddenLayer, outputLayer;
 	delete[] inpToHiddenCon, hiddenToOutCon;
+	delete[] inputLayerInputSource;
 	delete[] inputLayerConstantValue;
 }

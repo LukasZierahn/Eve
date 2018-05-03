@@ -61,6 +61,32 @@ void InfoWindow::WriteInfoData(int FPS)
 	buffer += " Interfernce Mode: " + to_string(world->GetRenderClass()->GetInput()->GetInterferenceMode()) + " \n";
 	buffer += " Fps: " + to_string(FPS) + " \n";
 
+	buffer += "\n Filter Mode: " + to_string(world->GetRenderClass()->GetCellDisplayMode());
+
+	switch (world->GetRenderClass()->GetCellDisplayMode())
+	{
+	case(Filter_NoFilter):
+		buffer += "\n  The selected Cell is purpel";
+		break;
+
+	case(Filter_EnergyManager):
+		buffer += "\n  Cyan correlates with Energy Managers\n  Yellow correlates with Oxygen Energy Managers\n";
+		break;
+
+	case(Filter_SplittingMembrane):
+		buffer += "\n  Cyan correlates with Membranes\n  Yellow correlates with Splitting Managers\n";
+		break;
+
+	case(Filter_Flagellum):
+		buffer += "\n  Cyan correlates with Max Speed\n  Yellow correlates with Acceleration Speed\n";
+		break;
+
+	case(Filter_CellHealth):
+		buffer += "\n  Cyan correlates with Swelling\n  Yellow correlates with the Lack of ATP\n";
+		break;
+
+	}
+
 	SetWindowText(textLabel, TEXT(buffer.c_str()));
 }
 

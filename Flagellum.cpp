@@ -17,14 +17,17 @@ Flagellum::Flagellum(Cell* parentCell, DNA* dna, int startpos) : pCell(parentCel
 	float secondValue = dna->GetGeneFloat(0, 1);
 
 	//accel and max speed are influenced by the first two dna characters, max speed more by the first and accel more by the second
-	accelSpeed = firstValue / 50.0f;
-	maxSpeed = firstValue / 10.0f;
+	accelSpeed = firstValue / 6.25f;
+	maxSpeed = firstValue / 1.0f;
 
-	maxSpeed += secondValue / 50.0f;
-	accelSpeed += secondValue / 15.0f;
+	maxSpeed += secondValue / 2.5f;
+	accelSpeed += secondValue / 1.25f;
 
-	energyRequierement = pow(maxSpeed + 1, 2) + pow(accelSpeed + 1, 2) - 2;
+	energyRequierement = (pow(maxSpeed + 1, 2) + pow(accelSpeed + 1, 2) - 2) / 75.0f;
 	surface = energyRequierement * 200;
+
+	pCell->AddToDNAColourX(Filter_Flagellum, maxSpeed);
+	pCell->AddToDNAColourZ(Filter_Flagellum, accelSpeed);
 
 	XNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
 	YNeuralNetNode = dna->GetGeneInt(0, neuralNet->GetOutputLayerCount());
@@ -41,11 +44,19 @@ float Flagellum::Tick(int t)
 
 	float currentSpeed = sqrt(pow(currentVel.x, 2) + pow(currentVel.y, 2) + pow(currentVel.z, 2));
 
-	currentVel.x += neuralNet->GetOutputNode(XNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
-	currentVel.y += neuralNet->GetOutputNode(YNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
-	currentVel.z += neuralNet->GetOutputNode(ZNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier;
+	currentVel.x += neuralNet->GetOutputNode(XNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier * Speed_Constant;
+	currentVel.y += neuralNet->GetOutputNode(YNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier * Speed_Constant;
+	currentVel.z += neuralNet->GetOutputNode(ZNeuralNetNode) * t * accelSpeed * (maxSpeed / (currentSpeed + 1)) / (volume * 100.0f) * modifier * Speed_Constant;
 
 	pCell->SetVelocity(&currentVel);
+
+	if (isnan(ATPCost) || isinf(ATPCost))
+	{
+		float one = abs(neuralNet->GetOutputNode(XNeuralNetNode));
+		float two = abs(neuralNet->GetOutputNode(YNeuralNetNode));
+		float three = abs(neuralNet->GetOutputNode(ZNeuralNetNode));
+		OutputDebugString("oh no");
+	}
 
 	return -1.0f * ATPCost;
 }

@@ -117,6 +117,9 @@
     <ClInclude Include="NeuralNetworkInput.h">
       <Filter>Header Files\Eve Header\Traits</Filter>
     </ClInclude>
+    <ClInclude Include="EnergyManagerOxygen.h">
+      <Filter>Header Files\Eve Header\Traits</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -186,6 +189,9 @@
       <Filter>Source Files\Eve\Traits</Filter>
     </ClCompile>
     <ClCompile Include="InformationFeeder.cpp">
+      <Filter>Source Files\Eve\Traits</Filter>
+    </ClCompile>
+    <ClCompile Include="EnergyManagerOxygen.cpp">
       <Filter>Source Files\Eve\Traits</Filter>
     </ClCompile>
   </ItemGroup>

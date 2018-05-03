@@ -7,6 +7,11 @@
 #include "NeuralNetwork.h"
 #include "Cell.h"
 
+#define Swell_Speed_Factor 0.0000001f
+#define Swell_Cost_Factor 0.01f
+
+#define Membrane_ATP_Cost_Modfier 0.000005f
+
 class DNA;
 class World;
 
@@ -44,7 +49,7 @@ public:
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return surfaceArea / 100; }
+	float GetATPBuildingCost() { return surfaceArea / 10; }
 
 	int GetType() { return Type_Membrane; }
 

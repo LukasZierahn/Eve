@@ -62,11 +62,7 @@ void CellInfoWindow::SetClosestCellAsCurrentCell()
 	float cd = 0;
 
 	XMFLOAT4* camPos = cam->GetPosition();
-
-	if (currentCell)
-	{
-		currentCell->SetSelected(false);
-	}
+	Cell* newCCell = nullptr;
 
 	for (Cell* c : *world->GetCellVec())
 	{
@@ -74,13 +70,25 @@ void CellInfoWindow::SetClosestCellAsCurrentCell()
 		if (d == -1 || cd < d)
 		{
 			d = cd;
-			currentCell = c;
+			newCCell = c;
 		}
 	}
 
+	SetCellAsCurrentCell(newCCell);
+}
+
+void CellInfoWindow::SetCellAsCurrentCell(Cell* newCCell)
+{
 	if (currentCell)
 	{
-		currentCell->SetSelected(true);
+		currentCell->SetSelected(false);
+	}
+
+	currentCell = newCCell;
+
+	if (newCCell)
+	{
+		newCCell->SetSelected(true);
 	}
 }
 

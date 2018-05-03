@@ -12,6 +12,10 @@ class DNA
 	int DNALength = 0;
 	int currentPos = 0;
 
+	int changingChance;
+	int addingChance;
+	int removingChance;
+
 public:
 	DNA();
 	DNA(string InpDNA);
@@ -24,12 +28,18 @@ public:
 	float GetGeneFloatFromSingleChar(float min, float max);
 	int GetGeneInt(int min, int max);
 
+	int GetChangingChance() { return changingChance; }
+	int GetAddingChance() { return addingChance; }
+	int GetRemovingChance() { return removingChance; }
+
 	string GetString() { return DNAString; }
 	string GetString(int start, int end) { return DNAString.substr(start, end); }
 	char GetCharacter (int pos) 
 	{
 		return DNAString[pos % DNALength] - 32;
 	}
+
+	bool MutateDNAThroughPoison(float poison);
 
 	~DNA();
 };

@@ -9,8 +9,6 @@ class Camera;
 class Input;
 class World;
 
-#define Amount_of_Cell_Display_Modes 3
-
 class RenderClass
 {
 public:
@@ -40,7 +38,11 @@ public:
 
 	void CycleCellDisplayMode()
 	{
-		cellDisplayMode = (cellDisplayMode + 1) % Amount_of_Cell_Display_Modes;
+		cellDisplayMode = (cellDisplayMode + 1) % Filter_Total_Count;
+	}
+	void SetCellDisplayMode(int newMode)
+	{
+		cellDisplayMode = newMode % Filter_Total_Count;
 	}
 
 	short GetCellDisplayMode() { return cellDisplayMode; }

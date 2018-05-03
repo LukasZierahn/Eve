@@ -23,11 +23,16 @@ class SplittingManager : public Trait, public NeuralNetworkInput
 	float surface = 0.0f;
 
 	int randomSpawnChance = 300000;
+	float buildingSpeed = 0.4f;
 
 	Cell* splittingCell = nullptr;
 	int buildingOutputNode = 0;
 	int splittingOutputNode = 0;
 	int buildingInputNode = 0;
+
+	int lastCheckedForSpace = 0;
+
+	void SplitCellOff(int t);
 
 public:
 	SplittingManager(Cell* parentCell, DNA* dna, int startpos);
@@ -38,12 +43,15 @@ public:
 	float Tick(int t);
 	string GetOutputString();
 
-	void InputValuesToNeuralNetwork() {}
+	void InputValuesToNeuralNetwork();
 
-	float GetATPBuildingCost() { return 100.0f; }
+	float GetATPBuildingCost() { return (pCell->GetVolume() / 100.0f) + static_cast<int>(createdThroughDNA) * (pCell->GetVolume() / 100.0f); }
+	float GetRandomSpawnChance() { return randomSpawnChance; }
 
 	void StartSplitting() { forceSplit = true; }
 	bool IsSplitting() { return splittingCell == nullptr; }
+
+	bool GetDNAInduced() { return createdThroughDNA; }
 
 	~SplittingManager();
 };

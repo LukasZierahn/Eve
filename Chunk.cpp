@@ -4,7 +4,7 @@
 
 Chunk::Chunk(int posX, int posY, int posZ, World* w, float vol, float surArea) : world(w), x(posX), y(posY), z(posZ)
 {
-	ChemCon = new ChemicalContainer(world, vol, surArea);
+	ChemCon = new ChemicalContainer(world, vol, surArea, nullptr, true);
 }
 
 void Chunk::AquireNeighbours()

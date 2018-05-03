@@ -128,18 +128,51 @@ void World::OpenOutputAndIncreaseTry()
 		delete output;
 		output = nullptr;
 	}
+
 	output = new ofstream();
 	output->open(currentTestRun + "\\" + (currentTestRun + " - " + to_string(currentTry) + ".csv"));
 	*output << "Minutes, Seconds, Cell Alive, Maximum Cell Count, Cells Died, Cells Died by Swelling, Cells Died by Lack of ATP, Cells Died by Lack of ATP that were Splitting, Cells Died in the last 30 Seconds, Cells Died in the last 30 Seconds (Swelling), Cells Died in the last 30 Seconds (ATP), Cells Died in the last 30 Seconds (ATP & Splitting), Cells Created, Cells Created in the last 30 Seconds";
-	*output << ", Average Cell Lifetime(in seconds), Cell Lifetime Standard Deviation, Average Cell Size, Cell Size Standard Deviation, Average Cell Length, Cell Length Standard Deviation, Flagellum Absolute, Flagellum Percent, Membrane Absolute, Membrane Percent, Energy Manager Absolute, Energy Manager percent, Splitting Manager Absolute, Splitting Manager Percent";
-	*output << ", Total Food, Total Poison\n";
+	*output << ", Average Cell Lifetime(in seconds), Cell Lifetime Standard Deviation, Average Cell Size, Cell Size Standard Deviation, Average Cell Length, Cell Length Standard Deviation";
+	*output << ", Average DNA length, DNA Standard Devriation, DNA Changing Chance Average, DNA Changing Chance Standard Devriation, DNA Adding Chance Average, DNA Changing Chance Standard Devriation, DNA Removing Chance Average, DNA Changing Chance Standard Devriation";
+	*output << ", Average Oxygen Susceptibility, Oxygen Susceptibility Standard devriation";
+	*output << ", Flagellum Absolute, Flagellum Percent, Membrane Absolute, Membrane Percent, Information Feeder Absolute, Information Feeder Percent, Energy Manager Absolute, Energy Manager percent, Splitting Manager Absolute, Splitting Manager Percent, Oxygen Energy Manager Absolute, Oxygen Energy Manager Percent";
+	*output << ", Energy Manager Average CC, Energy Manager Oxygen Average CC, Splitting Manager Average Potenz";
+	*output << ", Average Food, Average Poison, Average Oxygen";
+
+	for (int i = 0; i < contains_amount; i++)
+	{
+		*output << ", Average Passive Movement " + writtenSubstances[i];
+	}
+
+
+	for (int i = 0; i < contains_amount; i++)
+	{
+		*output << ", Average Active Movement Chunk to Cell " + writtenSubstances[i];
+	}
+
+
+	for (int i = 0; i < contains_amount; i++)
+	{
+		*output << ", Average Passive Movement Cell to Chunk " + writtenSubstances[i];
+	}
+
+	*output << ", Average Amount of Neural Network Input Nodes, Average Amount of Neural Network Hidden Nodes, Average Amount of Neural Network Output Nodes";
+	*output << ", ATP Input to NN, Food Input to NN, Poison input to NN, Oxygen Input to NN, Splitting Input to NN";
+
+	*output << ", faulty Cells";
+
+	*output << "\n";
 	output->flush();
 }
 
+//i think this has to be one of the uglies functions i ever wrote and i am sorry
 void World::WriteLog()
 {
+	cellVec.shrink_to_fit();
+	int totalCells = cellVec.size();
+
 	*output << (to_string(clock / 60000) + "," + to_string((clock / 1000) % 60));
-	*output << "," + to_string(cellVec.size()) + "," + to_string(maxCells);
+	*output << "," + to_string(totalCells) + "," + to_string(maxCells);
 	*output << "," + to_string(cellsDied) + "," + to_string(deathBySwelling) + "," + to_string(deathByATPLack) + "," + to_string(deathByATPLackAndSplitting);
 	*output << "," + to_string(cellsDied - oldCellsDied) + "," + to_string(deathBySwelling - oldDeathBySwelling) + "," + to_string(deathByATPLack - oldDeathByATPLack) + "," + to_string(deathByATPLackAndSplitting - oldDeathByATPLackAndSplitting);
 	*output << "," + to_string(cellsCreated) + "," + to_string(cellsCreated - oldCellsCreated);
@@ -153,69 +186,157 @@ void World::WriteLog()
 	float averageCellSize = 0;
 	float averageCellLength = 0;
 	float averageCellAliveTime = 0;
+	float averageCellOxygenSusceptibility = 0;
+
+	float averageDNALength = 0;
+	float averageDNAChangingChance = 0;
+	float averageDNAAddingChance = 0;
+	float averageDNARemovingChance = 0;
 
 	for (Cell* c : cellVec)
 	{
 		averageCellSize += c->GetSize();
 		averageCellLength += c->GetLength();
 		averageCellAliveTime += c->GetTimeAlive() / 1000;
+		averageCellOxygenSusceptibility += c->GetOxygenSusceptibility();
+
+		averageDNALength += c->GetDNA()->GetString().size();
+		averageDNAChangingChance += c->GetDNA()->GetChangingChance();
+		averageDNAAddingChance += c->GetDNA()->GetAddingChance();
+		averageDNARemovingChance += c->GetDNA()->GetRemovingChance();
 	}
 
-	averageCellSize /= cellVec.size();
-	averageCellLength /= cellVec.size();
-	averageCellAliveTime /= cellVec.size();
+	averageCellSize /= totalCells;
+	averageCellLength /= totalCells;
+	averageCellAliveTime /= totalCells;
+	averageCellOxygenSusceptibility /= totalCells;
+
+	averageDNALength /= totalCells;
+	averageDNAChangingChance /= totalCells;
+	averageDNAAddingChance /= totalCells;
+	averageDNARemovingChance /= totalCells;
+
 
 	float standardDeviationCellSize = 0;
 	float standardDeviationCellLength = 0;
 	float standardDeviationAliveTime = 0;
+	float standardDeviationOxygenSusceptibility = 0;
+
+	float standardDeviationDNALength = 0;
+	float standardDeviationDNAChangingChance = 0;
+	float standardDeviationDNAAddingChance = 0;
+	float standardDeviationDNARemovingChance = 0;
 
 	for (Cell* c : cellVec)
 	{
 		standardDeviationCellSize += pow(c->GetSize() - averageCellSize, 2);
 		standardDeviationCellLength += pow(c->GetLength() - averageCellLength, 2);
 		standardDeviationAliveTime += pow(c->GetTimeAlive() / 1000 - averageCellAliveTime, 2);
+		standardDeviationOxygenSusceptibility += pow(c->GetOxygenSusceptibility() / 1000 - averageCellAliveTime, 2);
+
+		standardDeviationDNALength += pow(c->GetDNA()->GetString().size() - averageDNALength, 2);
+		standardDeviationDNAChangingChance += pow(c->GetDNA()->GetChangingChance() - averageDNAChangingChance, 2);
+		standardDeviationDNAAddingChance += pow(c->GetDNA()->GetAddingChance() - averageDNAAddingChance, 2);
+		standardDeviationDNARemovingChance += pow(c->GetDNA()->GetRemovingChance() - averageDNARemovingChance, 2);
 	}
 
-	standardDeviationCellSize = sqrt(standardDeviationCellSize / cellVec.size()); //we devide by N instead of N - 1 as we are looking at the whole population
-	standardDeviationCellLength = sqrt(standardDeviationCellLength / cellVec.size());
-	standardDeviationAliveTime = sqrt(standardDeviationAliveTime / cellVec.size());
+	standardDeviationCellSize = sqrt(standardDeviationCellSize / totalCells); //we devide by N instead of N - 1 as we are looking at the whole population
+	standardDeviationCellLength = sqrt(standardDeviationCellLength / totalCells);
+	standardDeviationAliveTime = sqrt(standardDeviationAliveTime / totalCells);
+	standardDeviationOxygenSusceptibility = sqrt(standardDeviationOxygenSusceptibility / totalCells);
+
+	standardDeviationDNALength = sqrt(standardDeviationDNALength / totalCells);
+	standardDeviationDNAChangingChance = sqrt(standardDeviationDNAChangingChance / totalCells);
+	standardDeviationDNAAddingChance = sqrt(standardDeviationDNAAddingChance / totalCells);
+	standardDeviationDNARemovingChance = sqrt(standardDeviationDNARemovingChance / totalCells);
+
 
 	*output << "," + to_string(averageCellAliveTime) + "," + to_string(standardDeviationAliveTime) + "," + to_string(averageCellSize) + "," + to_string(standardDeviationCellSize) + "," + to_string(averageCellLength) + "," + to_string(standardDeviationCellLength);
+	*output << "," + to_string(averageDNALength) + "," + to_string(standardDeviationDNALength);
+	*output << "," + to_string(averageDNAChangingChance) + "," + to_string(standardDeviationDNAChangingChance) + "," + to_string(averageDNAAddingChance) + "," + to_string(standardDeviationDNAAddingChance) + "," + to_string(averageDNARemovingChance) + "," + to_string(standardDeviationDNARemovingChance);
+	*output << "," + to_string(averageCellOxygenSusceptibility) + "," + to_string(standardDeviationOxygenSusceptibility);
 
-	int flag = 0;
-	int mem = 0;
-	int ene = 0;
-	int split = 0;
-
-	cellVec.shrink_to_fit();
+	CellInformation cellInfo;
+	ZeroMemory(&cellInfo, sizeof(CellInformation));
 
 	for (Cell* c : cellVec)
 	{
-		c->AddCountForOutput(&flag, &mem, &ene, &split);
+		c->AddCountForOutput(&cellInfo);
 	}
 
-	*output << "," + to_string(flag) + "," + to_string(flag * 1.0f / cellVec.size());
-	*output << "," + to_string(mem) + "," + to_string(mem * 1.0f / cellVec.size());
-	*output << "," + to_string(ene) + "," + to_string(ene * 1.0f / cellVec.size());
-	*output << "," + to_string(split) + "," + to_string(split * 1.0f / cellVec.size());
+	cellInfo.energyManagerCC /= totalCells;
+	cellInfo.energyManagerOxygenCC /= totalCells;
 
-	*output << "," + to_string(GetTotalContainingsFromID(FOOD_CHEMCON_ID)) + "," + to_string(GetTotalContainingsFromID(POISON_CHEMCON_ID));
+	for (int i = 0; i < contains_amount; i++)
+	{
+		cellInfo.membranePassive[i] /= totalCells;
+		cellInfo.membraneAktiveChunkToCell[i] /= totalCells;
+		cellInfo.membraneAktiveCellToChunk[i] /= totalCells;
+	}
+
+	for (int i = 0; i < Type_Absolute_Amount; i++)
+	{
+		*output << "," + to_string(cellInfo.traitCount[i]) + "," + to_string(cellInfo.traitCount[i] * 1.0f / totalCells);
+	}
+
+	*output << "," + to_string(cellInfo.energyManagerCC) + "," + to_string(cellInfo.energyManagerOxygenCC) + "," + to_string(cellInfo.splittingManagerPotenz * 1.0f / totalCells);
+
+	*output << "," + to_string(GetTotalContainingsFromID(FOOD_CHEMCON_ID) / chunkArraySize) + "," + to_string(GetTotalContainingsFromID(POISON_CHEMCON_ID) / chunkArraySize) + "," + to_string(GetTotalContainingsFromID(OXYGEN_CHEMCON_ID) / chunkArraySize);
+
+	//membrane movement things
+	for (int i = 0; i < contains_amount; i++)
+	{
+		if (cellInfo.traitCount[Type_Membrane] != 0)
+		{
+			*output << "," + to_string(cellInfo.membranePassive[i] * 1.0f / cellInfo.traitCount[Type_Membrane]);
+		}
+		else
+		{
+			*output << ", 0";
+		}
+	}
+
+
+	for (int i = 0; i < contains_amount; i++)
+	{
+		if (cellInfo.traitCount[Type_Membrane] != 0)
+		{
+			*output << "," + to_string(cellInfo.membraneAktiveChunkToCell[i] * 1.0f / cellInfo.traitCount[Type_Membrane]);
+		}
+		else
+		{
+			*output << ", 0";
+		}
+	}
+
+
+	for (int i = 0; i < contains_amount; i++)
+	{
+		if (cellInfo.traitCount[Type_Membrane] != 0)
+		{
+			*output << "," + to_string(cellInfo.membraneAktiveCellToChunk[i] * 1.0f / cellInfo.traitCount[Type_Membrane]);
+		}
+		else
+		{
+			*output << ", 0";
+		}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		*output << "," + to_string(cellInfo.neuralNetworkNodes[i] * 1.0f / totalCells);
+	}
+
+	for (int i = 0; i < Neural_InpNode_Total_Sources; i++)
+	{
+		*output << "," + to_string(cellInfo.neuralNetworkSources[i] * 1.0f / totalCells);
+	}
+
+	*output << "," + to_string(faultyCells);
 
 	*output << "\n";
 
 	output->flush();
-
-	//there have been single cells (approximitly 1:10.000) that have infinte amounts of ATP and thus cant die and replicate indefenitely and that grow exponentially
-	//i am not sure what causes these 'zombie' cells but sever time pressure has lead to me to this, admittetly hacky solution.
-	//the influence on the simulation itself is negletable as the amount of zombie cells is very small
-	for (Cell* c : cellVec)
-	{
-		if (isinf(c->GetATP()))
-		{
-			//bad cells get killed
-			c->SetATP(0);
-		}
-	}
 }
 
 float World::GetTotalContainingsFromID(int ID)
@@ -257,6 +378,7 @@ string World::GetInfoWindowString()
 {
 	string buffer = "";
 
+	buffer += " Current Run: " + currentTestRun + "\n";
 	buffer += " Current Try: " + to_string(currentTry) + "\n";
 	buffer += " Chunk Size: " + to_string(chunkSize) + "\n";
 	buffer += " Time: " + to_string(clock / 60000) + ":" + to_string((clock / 1000) % 60) + "\n";

@@ -25,6 +25,7 @@ public:
 	CellInfoWindow(HINSTANCE hInstance, World* w, RenderClass* render);
 
 	void SetClosestCellAsCurrentCell();
+	void SetCellAsCurrentCell(Cell* newCCell);
 	void SwitchFollowingCurrentCell() 
 	{ 
 		if (cam->IsFollowingACell())
@@ -32,6 +33,8 @@ public:
 		else
 			cam->FollowCell(currentCell);
 	}
+
+	Cell* GetCurrentCell() { return currentCell; }
 
 	void SplitCurrentCell() { currentCell->ForceSplit(); }
 

@@ -177,7 +177,8 @@ void RenderClass::RenderFrame()
 
 	for (Cell* c : *world->GetCellVec())
 	{
-		c->GetModel()->Draw();
+		if (c)
+			c->GetModel()->Draw();
 	}
 
 	swapChain->Present(0, 0);

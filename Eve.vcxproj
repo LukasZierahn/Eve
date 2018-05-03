@@ -120,6 +120,7 @@
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="DNA.h" />
     <ClInclude Include="EnergyManager.h" />
+    <ClInclude Include="EnergyManagerOxygen.h" />
     <ClInclude Include="Flagellum.h" />
     <ClInclude Include="HardwareAcceleration.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -149,6 +150,7 @@
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="DNA.cpp" />
     <ClCompile Include="EnergyManager.cpp" />
+    <ClCompile Include="EnergyManagerOxygen.cpp" />
     <ClCompile Include="Flagellum.cpp" />
     <ClCompile Include="HardwareAcceleration.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

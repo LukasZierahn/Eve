@@ -9,6 +9,7 @@ public:
 	NeuralNetworkInput();
 
 	virtual void InputValuesToNeuralNetwork() = 0;
+	virtual int GetType() = 0;
 
 	~NeuralNetworkInput();
 };

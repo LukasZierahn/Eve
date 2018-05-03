@@ -1,10 +1,21 @@
-Programming:
+Changelog:
+	Neural Net max size from 6/10/15 to 5/5/5
+	poison fixed
+	poison now may damage the DNA of a cell
+	
+	chugged up dna to length 60
 
-	membrane swelling
-
-	Balancing
-
-	collision
-
-Writing:
-	(Include Fat ??)
+	Traits:
+		Splitting Manager:
+			Made Splitting Manager building cost proportional to the volume of the Cell
+			added Mandatory distance for splits, is relative to the average of the size and length of the cell
+			made spawn position of the new cell random on the unitary circle
+		Flagellum:
+			fixed the thing, less cost more movement
+		Oxygen Manager:
+			Exists now
+		Membrane:
+			passive transport added
+			active transport fixed
+Add:
+	Controls M & H & 1-9

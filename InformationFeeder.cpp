@@ -25,11 +25,11 @@ void InformationFeeder::InputValuesToNeuralNetwork()
 	ChemicalContainer* chemCon = pCell->GetChemCon();
 
 	//neuralNet->SetInputNode(temperatureInputNode, min(chemCon->GetTemperature() / Max_Temperature, 1.0f));
-	neuralNet->SetInputNode(ATPInputNode, min(pCell->GetATP() / (Max_ATP * chemCon->GetVolume()), 1.0f));
 	for (int i = 0; i < contains_amount; i++)
 	{
-		neuralNet->SetInputNode(containsInputNode[i], min(chemCon->GetContains(i) / Max_Amount_Of_Substances, 1.0f));
+		neuralNet->SetInputNode(containsInputNode[i], min(chemCon->GetContains(i) / (Max_Amount_Of_Substances * chemCon->GetVolume()), 1.0f), i + Neural_InpNode_Source_ContainsOffset);
 	}
+	neuralNet->SetInputNode(ATPInputNode, min(pCell->GetATP() / (Max_ATP * chemCon->GetVolume()), 1.0f), Neural_InpNode_Source_ATP);
 }
 
 

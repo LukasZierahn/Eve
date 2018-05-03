@@ -3,18 +3,22 @@
 
 #include "include.h"
 
-#define contains_amount 2
+#define contains_amount 3
 
 #define FOOD_CHEMCON_ID 0
 #define POISON_CHEMCON_ID 1
+#define OXYGEN_CHEMCON_ID 2
 
-#define FOOD_NORMALVALUE 350.0f
+#define FOOD_NORMALVALUE 750.0f
+#define OXYGEN_NORMALVALUE 200.0f
 
 #define TemperatureDiffusionCoefficient 1
 
-const static string writtenSubstances[] = { "Food", "Poison" };
+#define Membrane_Active_Movement_Factor 0.00001f
 
-const static float ATPCostToMoveSubstances[] = { 1.0f, 1.0f };
+const static string writtenSubstances[] = { "Food", "Poison", "Oxygen" };
+
+const static float ATPCostToMoveSubstances[] = { 1.0f, 1.0f, 1.0f };
 
 class World;
 class Membrane;
@@ -38,7 +42,7 @@ class ChemicalContainer
 	//the vector is ordered like this: 0-5 are the 6 direct neighbours
 
 public:
-	ChemicalContainer(World* world, float volume, float surfaceArea, ChemicalContainer* splittingFrom = nullptr);
+	ChemicalContainer(World* world, float volume, float surfaceArea, ChemicalContainer* splittingFrom = nullptr, bool isChunk = false);
 	
 	void DiffuseToNeighbouringChunks(float t);
 
@@ -68,6 +72,8 @@ public:
 
 	//float GetTemperature() { return temperature; }
 	//void AddToTemperature(float add) { temperature += add; }
+
+	void GetContainsFromParentCell(ChemicalContainer* splittingFrom);
 
 	float GetVolume() { return volume; }
 	void AddSubstanceToContains(int key, float add) { containsBuffer[key] += add; }

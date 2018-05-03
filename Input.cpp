@@ -15,8 +15,6 @@ Input::Input(RenderClass* RndCls, RECT rect)
 
 void Input::Key(bool down, WPARAM mes)
 {
-	wchar_t test = static_cast<wchar_t>(mes);
-
 	switch (static_cast<wchar_t>(mes))
 	{
 	case('W'):
@@ -63,36 +61,52 @@ void Input::Key(bool down, WPARAM mes)
 		}
 		break;
 
+	case('H'):
+		if (down)
+		{
+			cellInfoWindow->SetCellAsCurrentCell(render->GetWorld()->GetCell(rand() % render->GetWorld()->GetCellVec()->size()));
+		}
+		break;
+
 	case('F'):
 		if (down)
 		{
 			cellInfoWindow->SwitchFollowingCurrentCell();
 		}
 		break;
+
 	case('I'):
 		if (down)
 		{
 			interferenceMode = !interferenceMode;
 		}
 		break;
+
 	case('T'):
 		if (down && interferenceMode)
 		{
 			cellInfoWindow->SplitCurrentCell();
 		}
 		break;
+
 	case('N'):
 		if (down && interferenceMode)
 		{
 			render->GetWorld()->AddCell(new Cell(render, render->GetWorld(), nullptr, rand() % (render->GetWorld()->GetSizeX() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeY() * render->GetWorld()->GetChunkSize()), rand() % (render->GetWorld()->GetSizeZ() * render->GetWorld()->GetChunkSize())));
 		}
 		break;
+
 	case('M'):
 		if (down)
 		{
 			render->CycleCellDisplayMode();
 		}
 		break;
+	}
+
+	if (static_cast<wchar_t>(mes) >= '1' && static_cast<wchar_t>(mes) <= '9' && down) //i feel soo neat for thinking of this
+	{
+		render->SetCellDisplayMode(static_cast<wchar_t>(mes) - '1'); //mhhhh this feels so much better then 9 cases in that switch statement
 	}
 }
 

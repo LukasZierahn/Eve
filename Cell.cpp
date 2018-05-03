@@ -9,19 +9,24 @@
 #include "DNA.h"
 #include "NeuralNetwork.h"
 #include "IncludeTraits.h"
+#include "EnergyManagerOxygen.h"
 
-const string Cell::dnaCriteria[] = { "Fl", "Me", "i", "e", "s" };
+const string Cell::dnaCriteria[] = { "Fl", "Mm", "i", "e", "s", "Ex"};
 
 Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render(rndCls)
 {
 	ID = world->GetNextID();
 	velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
+	filterColourCount = Filter_Total_Count;
+	filterColour = new XMFLOAT4[filterColourCount];
+	ZeroMemory(filterColour, sizeof(XMFLOAT4) * filterColourCount);
+
 	dna = InpDNA;
 	if (InpDNA == nullptr)
 	{
 		dna = new DNA();
-		dna->GenerateRandomDNA(30);
+		dna->GenerateRandomDNA(60);
 	}
 	dna->SetCurrentPosition(0);
 
@@ -37,6 +42,8 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render
 	float e = sqrt(1 - (pow(size, 2) / pow(size + length, 2)));
 	surfaceArea = XM_PI * (2 * pow(size + length, 2) + pow(size, 2) * log((1 + e) / (1 - e)) / e);
 	volume = 4/3 * (size + length) * pow(size, 2) * XM_PI;
+
+	oxygenSusceptiblity = max(0.0f, dna->GetGeneFloat(-1.0f, 10.0f));
 
 	mod = new Model(rndCls);
 	mod->SetScale(size + length, size, size);
@@ -62,27 +69,20 @@ Cell::Cell(RenderClass* rndCls, World* world, DNA* InpDNA, Cell* pCell) : render
 	neuralNet = new NeuralNetwork();
 	neuralNet->BuildFromDNA(dna, 11);
 
-	AddToDNAColourX((neuralNet->GetInputLayerCount() + neuralNet->GetHiddenLayerCount() + neuralNet->GetOutputLayerCount()) / 45.0f);
+	//AddToDNAColourX((neuralNet->GetInputLayerCount() + neuralNet->GetHiddenLayerCount() + neuralNet->GetOutputLayerCount()) / (1.0f * (Max_Input_Nodes + Max_Hidden_Nodes + Max_Ouput_Nodes)));
 
 	CheckDNAForTraits();
 
-	if (!hasSplitter)
-	{
-		splitMan = new SplittingManager(this);
-		traits.push_back(splitMan);
-	}
-	
-	if (!hasEnergyManager)
-		traits.push_back(new EnergyManager(this));
-
-	traits.shrink_to_fit();
 	for (Trait* trt : traits)
 	{
 		buildingCost += trt->GetATPBuildingCost();
 	}
 
 	buildingCost += dna->GetString().size() * BuildingCost_DNA_Factor;
+	buildingCost += volume * (10.0f - oxygenSusceptiblity) * BuildingCost_OxygenSusceptibility_Factor;
 	buildingCost *= BuildingCost_Factor;
+
+	initialBuildingCost = buildingCost;
 }
 
 Cell::Cell(RenderClass* rndCls, World* world, DNA* dna, float x, float y, float z) : Cell(rndCls, world, dna)
@@ -94,11 +94,6 @@ void Cell::Tick(float t)
 {
 	timeAlive += t;
 
-	if (isinf(ATP) || isnan(ATP) || isinf(swellPercent) || isnan(swellPercent))
-	{
-		OutputDebugString("oh no!");
-	}
-
 	XMFLOAT4 pos = *mod->GetPosition();
 	chunk = world->GetChunk(floor(pos.x / chunkSize), floor(max(pos.y / chunkSize, 49)), floor(pos.z / chunkSize));
 
@@ -107,33 +102,94 @@ void Cell::Tick(float t)
 		nI->InputValuesToNeuralNetwork();
 	}
 
-	neuralNet->ComputeResult();
+	ATP -= neuralNet->ComputeResult() * t;
 
 	if (!hasMembrane)
-		chemCon->DiffuseFromAndTo(chunk->GetChemCon(), t);
+		chemCon->DiffuseFromAndTo(chunk->GetChemCon(), t, surfaceArea);
 
 	for (Trait* trt : traits)
 	{
 		ATP += trt->Tick(t);
 	}
 
+
 	chemCon->ApplyContains();
 	chunk->GetChemCon()->ApplyContains();
 
-	ATP -= chunk->GetChemCon()->GetContains(POISON_CHEMCON_ID) / 5;
+	//attrition through everything really
+	ATP -= t * volume / 500000.0f;
 
+	//poison stuff
+	float poisonAffectingCell = (chunk->GetChemCon()->GetContains(POISON_CHEMCON_ID) * t) / 5.0f + (chemCon->GetContains(POISON_CHEMCON_ID) * t) * 10.0f;
+	ATP -= poisonAffectingCell;
+	totalPoisonDamage += poisonAffectingCell;
+
+	ATP -= oxygenSusceptiblity * chunk->GetChemCon()->GetContains(OXYGEN_CHEMCON_ID) * Oxygen_Damage_Factor;
+
+	bool mutated = false;
+	if (poisonAffectingCell >= 0.001)
+		mutated = dna->MutateDNAThroughPoison(poisonAffectingCell);
+
+	//if the DNA mutates, we have to redo the whole cell, maybe there is a less CPU demanding way to do this, i will think about that should it become a problem
+	if (mutated)
+	{
+		OutputDebugString("DNA got Damaged!\n");
+
+		for (NeuralNetworkInput* nI : neuralInps)
+		{
+			if (nI->GetType() == Type_InformationFeeder)
+			{
+				delete nI;
+			}
+		}
+
+		for (Trait* t : traits)
+		{
+			delete t;
+		}
+
+		traits.clear();
+		neuralInps.clear();
+
+
+		dna->SetCurrentPosition(0);
+
+		size = dna->GetGeneFloat(0.1, 10);
+		length = dna->GetGeneFloat(0, 10);
+
+		float e = sqrt(1 - (pow(size, 2) / pow(size + length, 2)));
+		surfaceArea = XM_PI * (2 * pow(size + length, 2) + pow(size, 2) * log((1 + e) / (1 - e)) / e);
+		volume = 4 / 3 * (size + length) * pow(size, 2) * XM_PI;
+
+		ZeroMemory(filterColour, sizeof(XMFLOAT4) * filterColourCount);
+
+		bool hasMembrane = false;
+		bool hasEnergyManager = false;
+		bool hasSplitter = false;
+
+		CheckDNAForTraits();
+	}
+
+	//swelling stuff
 	swellPercent += chemCon->GetSwellAmount(chunk->GetChemCon()) * t / volume;
 	swellPercent += ATP_Swelling_Factor * ATP * t / volume;
+
 	if (swellPercent >= 1.25 || swellPercent <= 0.75 || ATP <= 0)
 	{
 		Die(swellPercent >= 1.25);
 	}
 
-
 	velocity.x *= pow(0.99, t / 10);
 	velocity.y *= pow(0.99, t / 10);
 	velocity.z *= pow(0.99, t / 10);
 	
+	if (isnan(ATP) || isinf(ATP)
+		|| isnan(swellPercent) || isinf(swellPercent))
+	{
+		OutputDebugString("oh no");
+		Die(false, true);
+	}
+
 	float velocityLength = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2) + pow(velocity.z, 2));
 
 	if (velocityLength >= 0.001)
@@ -142,16 +198,11 @@ void Cell::Tick(float t)
 	mod->AddPosition(velocity.x, velocity.y, velocity.z);
 	mod->SetScale(swellPercent * (size + length), size * swellPercent, size * swellPercent);
 
-	switch (render->GetCellDisplayMode())
-	{
-	case (1): //1 is the dnaInducedColourMode
-		mod->SetFilterColour(DNAColour);
-		break;
+	mod->SetFilterColour(filterColour[render->GetCellDisplayMode()]);
 
-	case (2): //2 is the healthiness filter mode
-		mod->SetFilterColour(XMFLOAT4(-(swellPercent - 1) / 0.25, 0.0f, min(ATP / 3000.0f, 1.0f), 0.0f));
-		break;
-	}
+	if (render->GetCellDisplayMode() == Filter_CellHealth)
+		mod->SetFilterColour(XMFLOAT4((swellPercent - 1) / 0.25, 0.0f, -min(ATP / 3000.0f, 1.0f), 0.0f));
+
 }
 
 void Cell::CheckDNAForTraits()
@@ -193,14 +244,31 @@ void Cell::CheckDNAForTraits()
 
 				if (i == Type_SplittingManager)
 				{
-					splitMan = new SplittingManager(this, dna, searchStart);
-					traits.push_back(splitMan);
+					SplittingManager* newSplit = new SplittingManager(this, dna, searchStart);
+					traits.push_back(newSplit);
+					neuralInps.push_back(newSplit);
 					hasSplitter = true;
+					break;
+				}
+
+				if (i == Type_EnergyManagerOxygen)
+				{
+					traits.push_back(new EnergyManagerOxygen(this, dna, searchStart));
+					hasEnergyManager = true;
 					break;
 				}
 			}
 		}
 	}
+
+	if (!hasSplitter)
+		traits.push_back(new SplittingManager(this));
+
+	if (!hasEnergyManager)
+		traits.push_back(new EnergyManager(this));
+
+	traits.shrink_to_fit();
+
 }
 
 void Cell::SetSelected(bool sel)
@@ -237,6 +305,29 @@ float Cell::LimitATPUsage(float LimitATPUsage, float Surface)
 	return min((ATP * Surface) / (volume * LimitATPUsage), 1.0f) * LimitATPUsage;
 }
 
+float Cell::GetSquaredDistanceToClosestCell()
+{
+	float d = -1.0f;
+	float cd = 0;
+	bool skippedMyself = false;
+
+	for (Cell* c : *world->GetCellVec())
+	{
+		cd = pow(c->GetPositionX() - mod->GetPosition()->x, 2) + pow(c->GetPositionY() - mod->GetPosition()->y, 2) + pow(c->GetPositionZ() - mod->GetPosition()->z, 2);
+		if (d == -1 || cd < d)
+		{
+			if (!skippedMyself && cd == 0)
+			{
+				skippedMyself = true;
+				continue;
+			}
+
+			d = cd;
+		}
+	}
+
+	return d;
+}
 
 void Cell::SetPosition(float x, float y, float z)
 {
@@ -261,35 +352,55 @@ void Cell::AddPosition(float x, float y, float z)
 	mod->SetPosition(x, y, z);
 }
 
+SplittingManager* Cell::GetSplittingManager()
+{
+	for (Trait* t : traits)
+	{
+		if (t->GetType() == Type_SplittingManager)
+		{
+			return static_cast<SplittingManager*>(t);
+		}
+	}
+}
+
 void Cell::ReleaseCell(Cell* pCell)
 {
-	delete chemCon;
-	chemCon = new ChemicalContainer(world, volume, surfaceArea, pCell->chemCon);
+	chemCon->GetContainsFromParentCell(pCell->chemCon);
 	pCell->ATP = pCell->ATP / 2;
 	ATP = pCell->ATP;
 }
 
-void Cell::Die(bool explode)
+void Cell::Die(bool explode, bool faulty)
 {
+
 	if (ATP <= 0)
 	{
-		world->IncreaseDeathByATPLack(splitMan->IsSplitting());
+		if (GetSplittingManager())
+			world->IncreaseDeathByATPLack(GetSplittingManager()->IsSplitting());
+		else
+			world->IncreaseDeathByATPLack(false);
 	}
 	else
 	{
 		world->IncreaseDeathBySwelling();
 	}
 
-	for (int i = 0; i < contains_amount; i++)
+	if (!faulty)
 	{
-		chunk->GetChemCon()->AddSubstanceToContains(i, chemCon->GetContains(i));
+		for (int i = 0; i < contains_amount; i++)
+		{
+			chunk->GetChemCon()->AddSubstanceToContains(i, chemCon->GetContains(i));
+		}
+
+		if (explode)
+			chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 50000); //poison
+		else
+			chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 100000);
 	}
-
-	if (explode)
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 50000); //poison
 	else
-		chunk->GetChemCon()->AddSubstanceToContains(POISON_CHEMCON_ID, volume / 100000);
-
+	{
+		world->IncreaseFaultyCells();
+	}
 
 	isAlive = false;
 	world->RemoveCell(ID);
@@ -320,6 +431,9 @@ string Cell::GetOutputString()
 	buffer += " Cell Swell Percent: "  + to_string(swellPercent) + "\n";
 	buffer += " Cell ATP: " + to_string(ATP) + "\n\n";
 
+	buffer += " Cell Building Cost: " + to_string(initialBuildingCost) + "\n";
+	buffer += " Cell Total Poison Damage: " + to_string(totalPoisonDamage) + "\n\n";
+	buffer += " Cell Oxygen Susceptibility: " + to_string(oxygenSusceptiblity) + "\n\n";
 
 	buffer += " Input Nodes: ";
 	for (int i = 0; i < neuralNet->GetInputLayerCount(); i++)
@@ -374,6 +488,70 @@ string Cell::GetOutputString()
 	return buffer;
 }
 
+void Cell::AddCountForOutput(CellInformation* cellInfo)
+{
+	{
+		for (Trait* trt : traits)
+		{
+			if(trt->GetType() != Type_EnergyManager && trt->GetType() != Type_SplittingManager)
+				cellInfo->traitCount[trt->GetType()] += 1;
+
+			if (trt->GetType() == Type_EnergyManager)
+			{
+				if (static_cast<EnergyManager*>(trt)->GetDNAInduced())
+				{
+					cellInfo->traitCount[Type_EnergyManager] += 1;
+					cellInfo->energyManagerCC += static_cast<EnergyManager*>(trt)->GetConversionCapabilities();
+				}
+			}
+
+			if (trt->GetType() == Type_SplittingManager)
+			{
+				if (static_cast<SplittingManager*>(trt)->GetDNAInduced())
+				{
+					cellInfo->traitCount[Type_SplittingManager] += 1;
+					cellInfo->splittingManagerPotenz += static_cast<SplittingManager*>(trt)->GetRandomSpawnChance();
+				}
+			}
+
+			if (trt->GetType() == Type_EnergyManagerOxygen)
+			{
+				cellInfo->energyManagerOxygenCC += static_cast<EnergyManagerOxygen*>(trt)->GetConversionCapabilities();
+			}
+
+			if (trt->GetType() == Type_Membrane)
+			{
+				for (int i = 0; i < contains_amount; i++)
+				{
+					cellInfo->membranePassive[i] += static_cast<Membrane*>(trt)->GetModifierPassiv(i);
+					cellInfo->membraneAktiveChunkToCell[i] += static_cast<Membrane*>(trt)->GetModifierChunkToCell(i);
+					cellInfo->membraneAktiveCellToChunk[i] += static_cast<Membrane*>(trt)->GetModifierCellToChunk(i);
+
+					if (isnan(cellInfo->membraneAktiveCellToChunk[i]) || isinf(cellInfo->membraneAktiveCellToChunk[i])
+						|| isnan(cellInfo->membraneAktiveChunkToCell[i]) || isinf(cellInfo->membraneAktiveChunkToCell[i])
+						|| isnan(cellInfo->membranePassive[i]) || isinf(cellInfo->membranePassive[i]))
+					{
+						OutputDebugString("Oh No");
+					}
+				}
+			}
+		}
+
+		for (NeuralNetworkInput* nI : neuralInps)
+		{
+			if (nI->GetType() != Type_EnergyManager)
+			{
+				cellInfo->traitCount[nI->GetType()] += 1;
+			}
+		}
+		cellInfo->neuralNetworkNodes[0] += neuralNet->GetInputLayerCount();
+		cellInfo->neuralNetworkNodes[1] += neuralNet->GetHiddenLayerCount();
+		cellInfo->neuralNetworkNodes[2] += neuralNet->GetOutputLayerCount();
+	}
+
+	neuralNet->AddSourcesToCellInformation(cellInfo);
+}
+
 Cell::~Cell()
 {
 	for (Trait* t : traits)
@@ -387,4 +565,5 @@ Cell::~Cell()
 	}
 
 	delete chemCon, mod, dna, neuralNet;
+	delete[] filterColour;
 }

@@ -5,8 +5,8 @@
 #include "Cell.h"
 #include "ChemicalContainer.h"
 
-#define CONVERSION_CONSTANT 2.0f
-#define CONVERSION_UPKEEP 0.0005f
+#define CONVERSION_CONSTANT 4.0f
+#define CONVERSION_UPKEEP 0.00005f
 
 class DNA;
 class NeuralNetwork;
@@ -29,7 +29,11 @@ public:
 
 	float Tick(int t);
 	string GetOutputString();
-	float GetATPBuildingCost() { return pCell->GetChemCon()->GetVolume() / 10 + (pCell->GetChemCon()->GetVolume() / 50) * conversionCapabilities; }
+	float GetATPBuildingCost() { return pCell->GetChemCon()->GetVolume() / 50 + (pCell->GetChemCon()->GetVolume() / 100) * conversionCapabilities; }
+
+	float GetConversionCapabilities() { return conversionCapabilities; }
+
+	bool GetDNAInduced() { return createdThroughDNA; }
 
 	int GetType() { return Type_EnergyManager; }
 

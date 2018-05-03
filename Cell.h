@@ -14,18 +14,24 @@ class NeuralNetwork;
 class NeuralNetworkInput;
 class SplittingManager;
 
+struct CellInformation;
+
 #define Type_Flagellum 0
 #define Type_Membrane 1
 #define Type_InformationFeeder 2
 #define Type_EnergyManager 3
 #define Type_SplittingManager 4
+#define Type_EnergyManagerOxygen 5
 
-#define Type_Absolute_Amount 5
+#define Type_Absolute_Amount 6
 
-#define ATP_Swelling_Factor 0.0000001f
+#define ATP_Swelling_Factor 0.0000001f 
 
-#define BuildingCost_Factor 2.5f
-#define BuildingCost_DNA_Factor 1.175f
+#define BuildingCost_Factor 1.5f
+#define BuildingCost_DNA_Factor 2.0f
+#define BuildingCost_OxygenSusceptibility_Factor 0.25f
+
+#define Oxygen_Damage_Factor 0.0025
 
 class Cell
 {
@@ -62,16 +68,19 @@ private:
 	bool hasSplitter = false;
 
 	float ATP = 0;
+	float oxygenSusceptiblity = 0.0f;
+	float totalPoisonDamage = 0.0f;
 
 	float buildingCost = 0;
+	float initialBuildingCost = 0;
 
 	XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };
-	XMFLOAT4 DNAColour = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	int filterColourCount = 0;
+	XMFLOAT4* filterColour;
 
 	vector<NeuralNetworkInput*> neuralInps;
 	vector<Trait*> traits;
-
-	SplittingManager* splitMan = nullptr;
 
 	const static string dnaCriteria[];
 
@@ -96,6 +105,8 @@ public:
 	float GetSurfaceArea() { return surfaceArea; }
 	float GetTimeAlive() { return timeAlive; }
 
+	float GetVolume() { return volume; }
+
 	DNA* GetDNA() { return dna; }
 
 	Model* GetModel() { return mod; }
@@ -106,6 +117,8 @@ public:
 	float GetPositionX() { return mod->GetPosition()->x; }
 	float GetPositionY() { return mod->GetPosition()->y; }
 	float GetPositionZ() { return mod->GetPosition()->z; }
+
+	float GetSquaredDistanceToClosestCell();
 
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT4* pos) { SetPosition(pos->x, pos->y, pos->z); }
@@ -126,36 +139,25 @@ public:
 	void AddToSwellPercent(float add) { swellPercent += add; }
 	float GetSwellPercent() { return swellPercent; }
 
+	float GetOxygenSusceptibility() { return oxygenSusceptiblity; }
+
 	void SetMembraneStatus(bool mem) { hasMembrane = mem; }
 	Chunk* GetCurrentChunk() { return chunk; }
 
 	NeuralNetwork* GetNeuralNetwork() { return neuralNet; }
 
-	void AddToDNAColourX(float add) { DNAColour.x += add; }
-	void AddToDNAColourY(float add) { DNAColour.y += add; }
-	void AddToDNAColourZ(float add) { DNAColour.z += add; }
+	SplittingManager* GetSplittingManager();
+
+	void AddToDNAColourX(int index, float add) { filterColour[index].x += add; }
+	void AddToDNAColourY(int index, float add) { filterColour[index].y += add; }
+	void AddToDNAColourZ(int index, float add) { filterColour[index].z += add; }
 
 	void ReleaseCell(Cell* pCell);
-	void Die(bool explode = false);
+	void Die(bool explode = false, bool faultyCell = false);
 
 	void ForceSplit();
 	string GetOutputString();
-	void AddCountForOutput(int* flag, int* mem, int* ene, int* split)
-	{
-		for (Trait* trt : traits)
-		{
-			if (trt->GetType() == Type_Flagellum)
-				*flag += 1;
-		}
-
-
-		if (hasMembrane)
-			*mem += 1;
-		if (hasEnergyManager)
-			*ene += 1;
-		if (hasSplitter)
-			*split += 1;
-	}
+	void AddCountForOutput(CellInformation *cellInfo);
 
 	~Cell();
 };

@@ -20,6 +20,24 @@ using namespace std;
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "D3DCompiler.lib")
 
+#define Filter_NoFilter 0
+#define Filter_EnergyManager 1
+#define Filter_SplittingMembrane 2
+#define Filter_Flagellum 3
+#define Filter_CellHealth 4
+
+#define Filter_Total_Count 5
+
+#define Neural_InpNode_Source_ATP 0
+#define Neural_InpNode_Source_ContainsOffset 1
+#define Neural_InpNode_Source_Food 1
+#define Neural_InpNode_Source_Poison 2
+#define Neural_InpNode_Source_Oxygen 3
+#define Neural_InpNode_Source_Splitting 4
+
+#define Neural_InpNode_Total_Sources 5
+
+
 void static CheckForError(HRESULT hr, string mes)
 {
 	if (FAILED(hr))

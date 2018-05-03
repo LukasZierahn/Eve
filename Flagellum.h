@@ -4,6 +4,8 @@
 #include "Trait.h"
 #include "Cell.h"
 
+#define Speed_Constant 7.5f
+
 class DNA;
 class NeuralNetwork;
 class Cell;
